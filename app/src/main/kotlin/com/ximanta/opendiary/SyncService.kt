@@ -124,16 +124,14 @@ class SyncService : Service() {
     }
 
     private fun buildJson(e: Entry): String {
-        val sb = StringBuilder()
-        sb.append('{')
-        sb.append("\"secret\":").append(quote(Config.SECRET)).append(',')
-        sb.append("\"deviceId\":").append(quote(Config.DEVICE_ID)).append(',')
-        sb.append("\"category\":").append(quote(e.category)).append(',')
-        sb.append("\"text\":").append(quote(e.text)).append(',')
-        sb.append("\"timestamp\":").append(e.timestamp)
-        sb.append('}')
-        return sb.toString()
-    }
+    val sb = StringBuilder()
+    sb.append('{')
+    sb.append("\"category\":").append(quote(e.category)).append(',')
+    sb.append("\"rawText\":").append(quote(e.text)).append(',')
+    sb.append("\"timestamp\":").append(e.timestamp)
+    sb.append('}')
+    return sb.toString()
+}
 
     private fun quote(s: String): String {
         val sb = StringBuilder()
