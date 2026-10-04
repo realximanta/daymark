@@ -476,7 +476,7 @@ Found a bug or have a feature request?
     <a href="https://github.com/realximanta">👤 More Projects</a>
   </p>
   
-  <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=60" alt="Contributor photo" width="50" style="border-radius: 50%" />
+  <img src="https://github.com/realximanta/daymark/blob/main/assets/developer.jpg?auto=format&fit=crop&w=400&q=60" alt="Contributor photo" width="50" style="border-radius: 50%" />
   
   **Made with ❤️ by [@realximanta](https://github.com/realximanta)**
 </div>
