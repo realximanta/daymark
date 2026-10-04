@@ -1,7 +1,7 @@
 package com.ximanta.opendiary
 
 object Config {
-    const val BACKEND_URL = "REPLACE WITH YOUR BACKEND URL"
+    const val BACKEND_URL = "https://daymark-backend-e18f.onrender.com"
     const val SECRET = "REPLACE_WITH_YOUR_SECRET"
     const val DEVICE_ID = "daymark-phone-1"
     const val SYNC_INTERVAL_MS = 15L * 60L * 1000L
