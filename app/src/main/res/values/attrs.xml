@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="daymarkBackground" format="color" />
+    <attr name="daymarkSurface" format="color" />
+    <attr name="daymarkStroke" format="color" />
+    <attr name="daymarkTextPrimary" format="color" />
+    <attr name="daymarkTextSecondary" format="color" />
+    <attr name="daymarkAccent" format="color" />
+    <attr name="daymarkRipple" format="color" />
+</resources>
