@@ -14,6 +14,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.BaseAdapter
+import android.widget.Button
 import android.widget.EditText
 import android.widget.GridView
 import android.widget.LinearLayout
@@ -23,6 +24,7 @@ import android.widget.Toast
 class MainActivity : Activity() {
 
     private lateinit var db: EntryDbHelper
+    private var updateInProgress = false
 
     private val categories = arrayOf(
         "Currently Doing",
@@ -90,6 +92,9 @@ class MainActivity : Activity() {
         AlarmScheduler.scheduleReminder(this, h, m)
 
         startSyncService(this)
+
+        // 🔄 Check for updates silently
+        checkForUpdates()
     }
 
     override fun onResume() {
@@ -117,6 +122,35 @@ class MainActivity : Activity() {
                     .start()
             }
         }, 120)
+    }
+
+    private fun checkForUpdates() {
+        val versionName = try {
+            packageManager.getPackageInfo(packageName, 0).versionName ?: "0.0"
+        } catch (e: Exception) {
+            "0.0"
+        }
+
+        UpdateChecker.check(versionName) { info ->
+            if (info != null && !updateInProgress) {
+                val btn = findViewById<Button>(rid("updateBtn", "id"))
+                btn.visibility = View.VISIBLE
+                btn.text = "⬆ Update to ${info.tag}"
+                btn.setOnClickListener(object : View.OnClickListener {
+                    override fun onClick(v: View?) {
+                        if (updateInProgress) return
+                        updateInProgress = true
+                        btn.isEnabled = false
+                        btn.text = "Preparing..."
+                        UpdateDownloader.downloadAndInstall(
+                            this@MainActivity, info.apkUrl
+                        ) { msg ->
+                            btn.text = msg
+                        }
+                    }
+                })
+            }
+        }
     }
 
     private inner class CategoryAdapter : BaseAdapter() {
