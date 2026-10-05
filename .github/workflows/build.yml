@@ -36,7 +36,7 @@ jobs:
           accept-android-sdk-licenses: true
 
       - name: Build debug APK
-        run: gradle assembleDebug --no-daemon
+        run: gradle assembleDebug --no-daemon --stacktrace
 
       - name: Prepare APK
         run: |
