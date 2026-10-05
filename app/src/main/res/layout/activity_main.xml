@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@drawable/bg_gradient">
+    android:background="?attr/daymarkBackground">
 
     <LinearLayout
         android:id="@+id/header"
@@ -13,7 +13,7 @@
         android:orientation="vertical"
         android:gravity="center"
         android:paddingTop="28dp"
-        android:paddingBottom="16dp">
+        android:paddingBottom="12dp">
 
         <ImageView
             android:id="@+id/logo"
@@ -36,17 +36,63 @@
             android:id="@+id/subtitleView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="A mark for every day"
+            android:text="@string/subtitle"
             android:textSize="13sp"
-            android:textColor="@color/text_secondary"
+            android:textColor="?attr/daymarkTextSecondary"
             android:layout_marginTop="2dp"/>
+
+        <TextView
+            android:id="@+id/statsView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0 entries • All synced"
+            android:textSize="12sp"
+            android:textColor="?attr/daymarkTextSecondary"
+            android:layout_marginTop="8dp"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginTop="8dp">
+
+            <Button
+                android:id="@+id/historyBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/history"
+                android:textAllCaps="false"
+                android:minHeight="40dp"
+                android:minWidth="0dp"/>
+
+            <Button
+                android:id="@+id/settingsBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/settings"
+                android:textAllCaps="false"
+                android:minHeight="40dp"
+                android:minWidth="0dp"
+                android:layout_marginStart="6dp"/>
+
+            <Button
+                android:id="@+id/syncBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/sync_now"
+                android:textAllCaps="false"
+                android:minHeight="40dp"
+                android:minWidth="0dp"
+                android:layout_marginStart="6dp"/>
+        </LinearLayout>
 
         <Button
             android:id="@+id/updateBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="⬆ Update available"
-            android:textColor="#1B5E20"
+            android:textColor="?attr/daymarkTextPrimary"
             android:textStyle="bold"
             android:textAllCaps="false"
             android:background="@drawable/bg_update_pill"
