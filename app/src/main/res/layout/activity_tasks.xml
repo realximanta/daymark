@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="12dp">
+    android:padding="12dp"
+    android:background="?attr/daymarkBackground">
 
     <TextView
         android:id="@+id/tasksTitle"
@@ -11,6 +12,7 @@
         android:layout_height="wrap_content"
         android:textSize="20sp"
         android:textStyle="bold"
+        android:textColor="?attr/daymarkTextPrimary"
         android:paddingBottom="8dp"/>
 
     <LinearLayout
