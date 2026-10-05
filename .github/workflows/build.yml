@@ -17,6 +17,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Restore persistent keystore
+        run: |
+          mkdir -p ~/.android
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > ~/.android/debug.keystore
+          chmod 600 ~/.android/debug.keystore
+
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
@@ -52,9 +58,7 @@ jobs:
           name: Daymark ${{ github.ref_name }}
           body: |
             📔 Daymark ${{ github.ref_name }}
-
             Download the APK below and install it on your Android device.
-            Enable "Install from unknown sources" for your file manager first.
           files: out/*.apk
           draft: false
           prerelease: false
