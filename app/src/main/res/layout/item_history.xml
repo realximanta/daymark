@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="14dp"
+    android:background="?attr/daymarkSurface">
+    <TextView
+        android:id="@+id/historyCategory"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="?attr/daymarkTextPrimary"
+        android:textStyle="bold"
+        android:textSize="15sp" />
+    <TextView
+        android:id="@+id/historyDate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="?attr/daymarkTextSecondary"
+        android:textSize="12sp"
+        android:layout_marginTop="3dp" />
+    <TextView
+        android:id="@+id/historyText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="?attr/daymarkTextPrimary"
+        android:textSize="14sp"
+        android:maxLines="4"
+        android:ellipsize="end"
+        android:layout_marginTop="8dp" />
+</LinearLayout>
