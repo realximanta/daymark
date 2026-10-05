@@ -9,11 +9,14 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.AdapterView
-import android.widget.ArrayAdapter
+import android.widget.BaseAdapter
 import android.widget.EditText
 import android.widget.GridView
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 
@@ -33,6 +36,10 @@ class MainActivity : Activity() {
         "Watched"
     )
 
+    private val icons = arrayOf(
+        "🏃", "🍽️", "💡", "✅", "😞", "🏆", "🚗", "📅", "🎬"
+    )
+
     private fun rid(name: String, type: String): Int =
         resources.getIdentifier(name, type, packageName)
 
@@ -48,15 +55,23 @@ class MainActivity : Activity() {
             }
         }
 
-        val title = findViewById<TextView>(rid("titleView", "id"))
-        title.text = "Daymark"
+        val header = findViewById<LinearLayout>(rid("header", "id"))
+        header.alpha = 0f
+        header.translationY = -40f
 
         val grid = findViewById<GridView>(rid("gridButtons", "id"))
-        val adapter = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, categories)
-        grid.adapter = adapter
+        grid.adapter = CategoryAdapter()
 
         grid.setOnItemClickListener(object : AdapterView.OnItemClickListener {
             override fun onItemClick(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                if (view != null) {
+                    view.animate()
+                        .scaleX(0.94f).scaleY(0.94f)
+                        .setDuration(80)
+                        .withEndAction {
+                            view.animate().scaleX(1f).scaleY(1f).setDuration(120).start()
+                        }.start()
+                }
                 val category = categories[position]
                 if (category == "Schedule/Tasks" || category == "Plan for Tomorrow") {
                     val i = Intent(this@MainActivity, TasksActivity::class.java)
@@ -75,6 +90,50 @@ class MainActivity : Activity() {
         AlarmScheduler.scheduleReminder(this, h, m)
 
         startSyncService(this)
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        val header = findViewById<LinearLayout>(rid("header", "id"))
+        header.animate()
+            .alpha(1f)
+            .translationY(0f)
+            .setDuration(500)
+            .setStartDelay(50)
+            .start()
+
+        val grid = findViewById<GridView>(rid("gridButtons", "id"))
+        grid.postDelayed({
+            for (i in 0 until grid.childCount) {
+                val child = grid.getChildAt(i)
+                child.alpha = 0f
+                child.translationY = 60f
+                child.animate()
+                    .alpha(1f)
+                    .translationY(0f)
+                    .setDuration(350)
+                    .setStartDelay((i * 55).toLong())
+                    .start()
+            }
+        }, 120)
+    }
+
+    private inner class CategoryAdapter : BaseAdapter() {
+        private val inflater = LayoutInflater.from(this@MainActivity)
+
+        override fun getCount(): Int = categories.size
+        override fun getItem(position: Int): Any = categories[position]
+        override fun getItemId(position: Int): Long = position.toLong()
+
+        override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
+            val view = convertView ?: inflater.inflate(rid("item_category", "layout"), parent, false)
+            val icon = view.findViewById<TextView>(rid("itemIcon", "id"))
+            val label = view.findViewById<TextView>(rid("itemLabel", "id"))
+            icon.text = icons[position]
+            label.text = categories[position]
+            return view
+        }
     }
 
     private fun showEntryDialog(category: String) {
