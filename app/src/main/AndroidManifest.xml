@@ -17,7 +17,9 @@
         android:label="@string/app_name"
         android:icon="@drawable/ic_launcher"
         android:theme="@style/AppTheme"
-        android:allowBackup="true">
+        android:allowBackup="false"
+        android:supportsRtl="true"
+        android:usesCleartextTraffic="false">
 
         <activity
             android:name="com.ximanta.opendiary.MainActivity"
@@ -31,6 +33,16 @@
 
         <activity
             android:name="com.ximanta.opendiary.TasksActivity"
+            android:exported="false"
+            android:label="@string/app_name"/>
+
+        <activity
+            android:name="com.ximanta.opendiary.HistoryActivity"
+            android:exported="false"
+            android:label="@string/app_name"/>
+
+        <activity
+            android:name="com.ximanta.opendiary.SettingsActivity"
             android:exported="false"
             android:label="@string/app_name"/>
 
