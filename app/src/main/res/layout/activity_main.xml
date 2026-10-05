@@ -41,6 +41,23 @@
             android:textColor="@color/text_secondary"
             android:layout_marginTop="2dp"/>
 
+        <Button
+            android:id="@+id/updateBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="⬆ Update available"
+            android:textColor="#1B5E20"
+            android:textStyle="bold"
+            android:textAllCaps="false"
+            android:background="@drawable/bg_update_pill"
+            android:paddingLeft="22dp"
+            android:paddingRight="22dp"
+            android:minWidth="0dp"
+            android:minHeight="0dp"
+            android:layout_marginTop="14dp"
+            android:elevation="3dp"
+            android:visibility="gone"/>
+
     </LinearLayout>
 
     <GridView
