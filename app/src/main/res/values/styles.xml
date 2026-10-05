@@ -3,6 +3,30 @@
     <style name="AppTheme" parent="@android:style/Theme.Material.Light.NoActionBar">
         <item name="android:statusBarColor">@color/primary_dark</item>
         <item name="android:windowLightStatusBar">false</item>
-        <item name="android:windowBackground">@color/background</item>
+        <item name="android:windowBackground">?attr/daymarkBackground</item>
+        <item name="android:fontFamily">sans</item>
+        <item name="android:colorAccent">@color/primary</item>
+        <item name="daymarkBackground">@color/background</item>
+        <item name="daymarkSurface">@color/card</item>
+        <item name="daymarkStroke">@color/card_stroke</item>
+        <item name="daymarkTextPrimary">@color/text_primary</item>
+        <item name="daymarkTextSecondary">@color/text_secondary</item>
+        <item name="daymarkAccent">@color/accent</item>
+        <item name="daymarkRipple">@color/ripple</item>
+    </style>
+
+    <style name="AppTheme.Dark" parent="@android:style/Theme.Material.NoActionBar">
+        <item name="android:statusBarColor">#0A1F16</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowBackground">?attr/daymarkBackground</item>
+        <item name="android:fontFamily">sans</item>
+        <item name="android:colorAccent">#B8E986</item>
+        <item name="daymarkBackground">#0F1713</item>
+        <item name="daymarkSurface">#18231D</item>
+        <item name="daymarkStroke">#2B3A31</item>
+        <item name="daymarkTextPrimary">#EAF6EC</item>
+        <item name="daymarkTextSecondary">#B1C5B8</item>
+        <item name="daymarkAccent">#B8E986</item>
+        <item name="daymarkRipple">#335E8E63</item>
     </style>
 </resources>
