@@ -2,6 +2,13 @@
 <resources>
     <color name="primary">#2E7D32</color>
     <color name="primary_dark">#1B5E20</color>
+    <color name="primary_light">#A5D6A7</color>
     <color name="accent">#FFD54F</color>
-    <color name="background">#FAFAFA</color>
+    <color name="background">#F1F8E9</color>
+    <color name="background_grad_end">#C8E6C9</color>
+    <color name="card">#FFFFFF</color>
+    <color name="card_stroke">#E0E0E0</color>
+    <color name="text_primary">#1B5E20</color>
+    <color name="text_secondary">#607D8B</color>
+    <color name="ripple">#332E7D32</color>
 </resources>
