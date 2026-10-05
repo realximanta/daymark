@@ -1,4 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Daymark</string>
+    <string name="subtitle">A mark for every day</string>
+    <string name="history">Journal history</string>
+    <string name="settings">Settings</string>
+    <string name="sync_now">Sync now</string>
+    <string name="new_entry">New entry</string>
+    <string name="search_entries">Search entries</string>
+    <string name="no_entries">No entries yet. Start with one small note.</string>
+    <string name="reminders">Daily reminders</string>
+    <string name="reminders_summary">Choose when Daymark nudges you to write</string>
+    <string name="theme">Theme</string>
+    <string name="theme_summary">System default</string>
+    <string name="light">Light</string>
+    <string name="dark">Dark</string>
+    <string name="system">System default</string>
+    <string name="delete_entry">Delete entry</string>
+    <string name="delete_entry_message">This removes the local copy. A synced copy in your GitHub journal is not changed.</string>
 </resources>
