@@ -3,5 +3,7 @@ local.properties
 .gradle/
 build/
 app/build/
+.daymark-build/
+.daymark-debug.keystore
 .idea/
 *.apk
