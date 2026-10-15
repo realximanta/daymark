@@ -17,4 +17,14 @@
     <string name="system">System default</string>
     <string name="delete_entry">Delete entry</string>
     <string name="delete_entry_message">This removes the local copy. A synced copy in your GitHub journal is not changed.</string>
+    <string name="menu">Menu</string>
+    <string name="open_drawer">Open navigation</string>
+    <string name="close_drawer">Close navigation</string>
+    <string name="drawer_history_hint">All past entries</string>
+    <string name="drawer_settings_hint">Reminders, theme &amp; more</string>
+    <string name="drawer_sync_hint">Push pending entries</string>
+    <string name="entry_subtitle">Stored locally • syncs automatically</string>
+    <string name="entry_counter">0 characters</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
 </resources>
