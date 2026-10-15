@@ -11,4 +11,7 @@
     <color name="text_primary">#1B5E20</color>
     <color name="text_secondary">#607D8B</color>
     <color name="ripple">#332E7D32</color>
+    <color name="scrim">#99000000</color>
+    <color name="drawer_header_start">#2E7D32</color>
+    <color name="drawer_header_end">#1B5E20</color>
 </resources>
