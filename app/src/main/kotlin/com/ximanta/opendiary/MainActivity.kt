@@ -9,15 +9,16 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
+import android.view.animation.OvershootInterpolator
 import android.widget.BaseAdapter
 import android.widget.Button
 import android.widget.EditText
 import android.widget.GridView
+import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
@@ -26,6 +27,16 @@ class MainActivity : Activity() {
     private lateinit var db: EntryDbHelper
     private var updateInProgress = false
     private var appliedTheme = ""
+
+    // Drawer state
+    private lateinit var drawer: LinearLayout
+    private lateinit var scrim: View
+    private lateinit var menuBtn: ImageButton
+    private var drawerOpen = false
+    private val drawerWidthPx by lazy { (290 * resources.displayMetrics.density).toInt() }
+
+    // Pending update info so drawer item can trigger it
+    private var pendingUpdateTag: String? = null
 
     private val categories = arrayOf(
         "Currently Doing", "What I Ate", "New Idea", "Schedule/Tasks", "Regret",
@@ -46,38 +57,103 @@ class MainActivity : Activity() {
             checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED
         ) requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS), REQUEST_NOTIFICATIONS)
 
-        val header = findViewById<LinearLayout>(rid("header", "id"))
-        header.alpha = 0f
-        header.translationY = -40f
-        val grid = findViewById<GridView>(rid("gridButtons", "id"))
-        grid.adapter = CategoryAdapter()
-        grid.setOnItemClickListener { _, view, position, _ ->
-            if (view != null) {
-                view.animate().scaleX(0.94f).scaleY(0.94f).setDuration(80).withEndAction {
-                    view.animate().scaleX(1f).scaleY(1f).setDuration(120).start()
-                }.start()
-            }
-            val category = categories[position]
-            if (category == "Schedule/Tasks" || category == "Plan for Tomorrow") {
-                startActivity(Intent(this, TasksActivity::class.java).putExtra("category", category))
-            } else showEntryDialog(category)
-        }
+        setupDrawer()
+        setupGrid()
+        setupVersionFooter()
+        scheduleAlarms()
+        startSyncService(this)
+        checkForUpdates()
+    }
 
-        findViewById<Button>(rid("historyBtn", "id")).setOnClickListener {
+    // ══════════════ DRAWER ══════════════
+    private fun setupDrawer() {
+        drawer = findViewById(rid("navDrawer", "id"))
+        scrim = findViewById(rid("scrim", "id"))
+        menuBtn = findViewById(rid("menuBtn", "id"))
+
+        menuBtn.setOnClickListener { if (drawerOpen) closeDrawer() else openDrawer() }
+        scrim.setOnClickListener { closeDrawer() }
+
+        findViewById<View>(rid("navHistory", "id")).setOnClickListener {
+            closeDrawer()
             startActivity(Intent(this, HistoryActivity::class.java))
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
         }
-        findViewById<Button>(rid("settingsBtn", "id")).setOnClickListener {
+        findViewById<View>(rid("navSettings", "id")).setOnClickListener {
+            closeDrawer()
             startActivity(Intent(this, SettingsActivity::class.java))
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
         }
-        findViewById<Button>(rid("syncBtn", "id")).setOnClickListener {
+        findViewById<View>(rid("navSync", "id")).setOnClickListener {
+            val syncIcon = findViewById<ImageView>(rid("navSyncIcon", "id"))
+            spinView(syncIcon)
+            closeDrawer()
             startSyncService(this)
             Toast.makeText(this, "Sync started", Toast.LENGTH_SHORT).show()
             refreshStats()
         }
 
-        scheduleAlarms()
-        startSyncService(this)
-        checkForUpdates()
+        findViewById<Button>(rid("updateBtn", "id")).setOnClickListener {
+            triggerUpdateInstall()
+        }
+
+        // Top-right sync icon
+        findViewById<ImageButton>(rid("syncIconBtn", "id")).setOnClickListener {
+            spinView(it as ImageView)
+            startSyncService(this)
+            Toast.makeText(this, "Sync started", Toast.LENGTH_SHORT).show()
+            refreshStats()
+        }
+    }
+
+    private fun openDrawer() {
+        if (drawerOpen) return
+        drawerOpen = true
+        scrim.visibility = View.VISIBLE
+        scrim.alpha = 0f
+        scrim.animate().alpha(1f).setDuration(220).start()
+
+        drawer.animate()
+            .translationX(0f)
+            .setDuration(300)
+            .setInterpolator(OvershootInterpolator(0.85f))
+            .start()
+
+        menuBtn.animate().rotation(90f).setDuration(260).start()
+        menuBtn.postDelayed({ menuBtn.setImageResource(rid("ic_close", "drawable")) }, 90)
+    }
+
+    private fun closeDrawer() {
+        if (!drawerOpen) return
+        drawerOpen = false
+        scrim.animate().alpha(0f).setDuration(200).withEndAction {
+            scrim.visibility = View.GONE
+        }.start()
+        drawer.animate().translationX(-drawerWidthPx.toFloat() - 30f)
+            .setDuration(240).start()
+        menuBtn.animate().rotation(0f).setDuration(240).start()
+        menuBtn.postDelayed({ menuBtn.setImageResource(rid("ic_menu", "drawable")) }, 90)
+    }
+
+    override fun onBackPressed() {
+        if (drawerOpen) closeDrawer() else super.onBackPressed()
+    }
+
+    // ══════════════ GRID ══════════════
+    private fun setupGrid() {
+        val grid = findViewById<GridView>(rid("gridButtons", "id"))
+        grid.adapter = CategoryAdapter()
+        grid.setOnItemClickListener { _, view, position, _ ->
+            view?.animate()?.scaleX(0.93f)?.scaleY(0.93f)?.setDuration(80)?.withEndAction {
+                view.animate().scaleX(1f).scaleY(1f).setDuration(140).start()
+            }?.start()
+
+            val category = categories[position]
+            if (category == "Schedule/Tasks" || category == "Plan for Tomorrow") {
+                startActivity(Intent(this, TasksActivity::class.java).putExtra("category", category))
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+            } else showEntryDialog(category, icons[position])
+        }
     }
 
     override fun onResume() {
@@ -88,18 +164,34 @@ class MainActivity : Activity() {
         }
         if (!::db.isInitialized) return
         refreshStats()
+
         val header = findViewById<LinearLayout>(rid("header", "id"))
-        header.animate().alpha(1f).translationY(0f).setDuration(500).setStartDelay(50).start()
+        header.alpha = 0f
+        header.translationY = -30f
+        header.animate().alpha(1f).translationY(0f).setDuration(480).setStartDelay(40).start()
+
         val grid = findViewById<GridView>(rid("gridButtons", "id"))
         grid.postDelayed({
             for (i in 0 until grid.childCount) {
                 val child = grid.getChildAt(i)
                 child.alpha = 0f
-                child.translationY = 60f
-                child.animate().alpha(1f).translationY(0f).setDuration(350)
+                child.translationY = 70f
+                child.animate().alpha(1f).translationY(0f).setDuration(360)
                     .setStartDelay((i * 55).toLong()).start()
             }
         }, 120)
+    }
+
+    // ══════════════ UTILITIES ══════════════
+    private fun spinView(v: View) {
+        v.animate().rotationBy(360f).setDuration(900).start()
+    }
+
+    private fun setupVersionFooter() {
+        try {
+            val vn = packageManager.getPackageInfo(packageName, 0).versionName ?: "?"
+            findViewById<TextView>(rid("versionFooter", "id")).text = "Daymark v$vn"
+        } catch (_: Throwable) { }
     }
 
     private fun refreshStats() {
@@ -142,32 +234,51 @@ class MainActivity : Activity() {
         getSharedPreferences(Config.PREFS, Context.MODE_PRIVATE)
             .getString(Config.KEY_THEME, Config.THEME_SYSTEM) ?: Config.THEME_SYSTEM
 
+    // ══════════════ UPDATES ══════════════
     private fun checkForUpdates() {
         val versionName = try { packageManager.getPackageInfo(packageName, 0).versionName ?: "0.0" }
         catch (_: Exception) { "0.0" }
         UpdateChecker.check(versionName) { info ->
             if (info != null && !updateInProgress) {
+                pendingUpdateTag = info.tag
                 val btn = findViewById<Button>(rid("updateBtn", "id"))
                 btn.visibility = View.VISIBLE
-                btn.isEnabled = true
                 btn.text = "⬆ Update to ${info.tag}"
-                btn.setOnClickListener {
-                    if (updateInProgress) return@setOnClickListener
-                    updateInProgress = true
-                    btn.isEnabled = false
-                    btn.text = "Preparing…"
-                    UpdateDownloader.downloadAndInstall(this, info.apkUrl) { msg, finished ->
-                        btn.text = msg
-                        if (finished) {
-                            updateInProgress = false
-                            btn.isEnabled = true
-                        }
-                    }
-                }
             }
         }
     }
 
+    private fun triggerUpdateInstall() {
+        if (updateInProgress) return
+        val tag = pendingUpdateTag ?: return
+        val btn = findViewById<Button>(rid("updateBtn", "id"))
+        updateInProgress = true
+        btn.isEnabled = false
+        closeDrawer()
+        btn.postDelayed({
+            btn.text = "Preparing…"
+            // Rebuild apkUrl via UpdateChecker — better: keep url too
+            val versionName = try { packageManager.getPackageInfo(packageName, 0).versionName ?: "0.0" }
+            catch (_: Exception) { "0.0" }
+            UpdateChecker.check(versionName) { info2 ->
+                if (info2 == null) {
+                    updateInProgress = false
+                    btn.isEnabled = true
+                    btn.text = "⬆ Update to $tag"
+                    return@check
+                }
+                UpdateDownloader.downloadAndInstall(this, info2.apkUrl) { msg, finished ->
+                    btn.text = msg
+                    if (finished) {
+                        updateInProgress = false
+                        btn.isEnabled = true
+                    }
+                }
+            }
+        }, 250)
+    }
+
+    // ══════════════ GRID ADAPTER ══════════════
     private inner class CategoryAdapter : BaseAdapter() {
         private val inflater = LayoutInflater.from(this@MainActivity)
         override fun getCount(): Int = categories.size
@@ -181,15 +292,31 @@ class MainActivity : Activity() {
         }
     }
 
-    private fun showEntryDialog(category: String) {
-        val input = EditText(this)
-        input.hint = "Write whatever is on your mind…"
-        input.minLines = 5
-        input.gravity = android.view.Gravity.TOP
-        input.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES or
-            InputType.TYPE_TEXT_FLAG_MULTI_LINE
-        val dlg = AlertDialog.Builder(this).setTitle(category).setView(input)
-            .setPositiveButton("Save", null).setNegativeButton("Cancel", null).create()
+    // ══════════════ ENTRY DIALOG ══════════════
+    private fun showEntryDialog(category: String, emoji: String) {
+        val view = LayoutInflater.from(this).inflate(rid("dialog_entry", "layout"), null)
+        val emojiView = view.findViewById<TextView>(rid("dialogEmoji", "id"))
+        val titleView = view.findViewById<TextView>(rid("dialogTitle", "id"))
+        val input = view.findViewById<EditText>(rid("dialogInput", "id"))
+        val counter = view.findViewById<TextView>(rid("dialogCounter", "id"))
+
+        emojiView.text = emoji
+        titleView.text = category
+
+        input.addTextChangedListener(object : android.text.TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, a: Int, b: Int, c: Int) = Unit
+            override fun onTextChanged(s: CharSequence?, a: Int, b: Int, c: Int) {
+                counter.text = "${s?.length ?: 0} characters"
+            }
+            override fun afterTextChanged(s: android.text.Editable?) = Unit
+        })
+
+        val dlg = AlertDialog.Builder(this)
+            .setView(view)
+            .setPositiveButton("Save", null)
+            .setNegativeButton("Cancel", null)
+            .create()
+
         dlg.setOnShowListener(object : DialogInterface.OnShowListener {
             override fun onShow(di: DialogInterface?) {
                 dlg.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
@@ -210,6 +337,7 @@ class MainActivity : Activity() {
             }
         })
         dlg.show()
+        input.requestFocus()
     }
 
     override fun onDestroy() {
