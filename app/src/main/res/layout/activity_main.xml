@@ -1,123 +1,283 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/rootLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="?attr/daymarkBackground">
 
+    <!-- ═══════════ MAIN CONTENT ═══════════ -->
     <LinearLayout
-        android:id="@+id/header"
+        android:id="@+id/mainContent"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center"
-        android:paddingTop="28dp"
-        android:paddingBottom="12dp">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <ImageView
-            android:id="@+id/logo"
-            android:layout_width="72dp"
-            android:layout_height="72dp"
-            android:src="@drawable/ic_launcher"
-            android:contentDescription="@string/app_name"/>
-
-        <TextView
-            android:id="@+id/titleView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/app_name"
-            android:textSize="28sp"
-            android:textStyle="bold"
-            android:textColor="@color/primary_dark"
-            android:layout_marginTop="10dp"/>
-
-        <TextView
-            android:id="@+id/subtitleView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/subtitle"
-            android:textSize="13sp"
-            android:textColor="?attr/daymarkTextSecondary"
-            android:layout_marginTop="2dp"/>
-
-        <TextView
-            android:id="@+id/statsView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="0 entries • All synced"
-            android:textSize="12sp"
-            android:textColor="?attr/daymarkTextSecondary"
-            android:layout_marginTop="8dp"/>
-
+        <!-- 🏷️ Top App Bar -->
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:id="@+id/topBar"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
             android:orientation="horizontal"
-            android:gravity="center"
-            android:layout_marginTop="8dp">
+            android:gravity="center_vertical"
+            android:paddingStart="6dp"
+            android:paddingEnd="6dp">
 
-            <Button
-                android:id="@+id/historyBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/history"
-                android:textAllCaps="false"
-                android:minHeight="40dp"
-                android:minWidth="0dp"/>
+            <ImageButton
+                android:id="@+id/menuBtn"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_menu"
+                android:tint="?attr/daymarkTextPrimary"
+                android:contentDescription="@string/menu"/>
 
-            <Button
-                android:id="@+id/settingsBtn"
-                android:layout_width="wrap_content"
+            <TextView
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="@string/settings"
-                android:textAllCaps="false"
-                android:minHeight="40dp"
-                android:minWidth="0dp"
-                android:layout_marginStart="6dp"/>
+                android:layout_weight="1"
+                android:text="@string/app_name"
+                android:textColor="?attr/daymarkTextPrimary"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:paddingStart="8dp"/>
 
-            <Button
-                android:id="@+id/syncBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/sync_now"
-                android:textAllCaps="false"
-                android:minHeight="40dp"
-                android:minWidth="0dp"
-                android:layout_marginStart="6dp"/>
+            <ImageButton
+                android:id="@+id/syncIconBtn"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_sync"
+                android:tint="?attr/daymarkTextPrimary"
+                android:contentDescription="@string/sync_now"/>
         </LinearLayout>
 
+        <!-- 🎯 Header (logo + tagline + stats) -->
+        <LinearLayout
+            android:id="@+id/header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:paddingTop="4dp"
+            android:paddingBottom="14dp">
+
+            <ImageView
+                android:id="@+id/logo"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:src="@drawable/ic_launcher"
+                android:contentDescription="@string/app_name"/>
+
+            <TextView
+                android:id="@+id/subtitleView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/subtitle"
+                android:textSize="13sp"
+                android:textColor="?attr/daymarkTextSecondary"
+                android:layout_marginTop="6dp"/>
+
+            <TextView
+                android:id="@+id/statsView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0 entries • All synced"
+                android:textSize="12sp"
+                android:textColor="?attr/daymarkTextSecondary"
+                android:layout_marginTop="4dp"/>
+        </LinearLayout>
+
+        <!-- 🎴 Category Grid -->
+        <GridView
+            android:id="@+id/gridButtons"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:numColumns="2"
+            android:horizontalSpacing="8dp"
+            android:verticalSpacing="8dp"
+            android:stretchMode="columnWidth"
+            android:paddingLeft="14dp"
+            android:paddingRight="14dp"
+            android:paddingBottom="16dp"
+            android:clipToPadding="false"
+            android:scrollbars="none"/>
+    </LinearLayout>
+
+    <!-- ═══════════ SCRIM OVERLAY ═══════════ -->
+    <View
+        android:id="@+id/scrim"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#99000000"
+        android:visibility="gone"
+        android:clickable="true"
+        android:focusable="true"/>
+
+    <!-- ═══════════ NAVIGATION DRAWER ═══════════ -->
+    <LinearLayout
+        android:id="@+id/navDrawer"
+        android:layout_width="290dp"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="?attr/daymarkSurface"
+        android:elevation="12dp"
+        android:translationX="-320dp">
+
+        <!-- Drawer Header -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/bg_drawer_header"
+            android:padding="22dp">
+
+            <ImageView
+                android:layout_width="52dp"
+                android:layout_height="52dp"
+                android:src="@drawable/ic_launcher"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/app_name"
+                android:textColor="#FFFFFF"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                android:layout_marginTop="12dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/subtitle"
+                android:textColor="#DDFFFFFF"
+                android:textSize="12sp"
+                android:layout_marginTop="2dp"/>
+        </LinearLayout>
+
+        <!-- Drawer Items -->
+        <LinearLayout
+            android:id="@+id/navHistory"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?android:attr/selectableItemBackground"
+            android:paddingStart="22dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp">
+
+            <ImageView
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:src="@drawable/ic_history"
+                android:tint="?attr/daymarkTextPrimary"/>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/history"
+                android:textColor="?attr/daymarkTextPrimary"
+                android:textSize="15sp"
+                android:layout_marginStart="18dp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/navSettings"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?android:attr/selectableItemBackground"
+            android:paddingStart="22dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp">
+
+            <ImageView
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:src="@drawable/ic_settings"
+                android:tint="?attr/daymarkTextPrimary"/>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/settings"
+                android:textColor="?attr/daymarkTextPrimary"
+                android:textSize="15sp"
+                android:layout_marginStart="18dp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/navSync"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?android:attr/selectableItemBackground"
+            android:paddingStart="22dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp">
+
+            <ImageView
+                android:id="@+id/navSyncIcon"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:src="@drawable/ic_sync"
+                android:tint="?attr/daymarkTextPrimary"/>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/sync_now"
+                android:textColor="?attr/daymarkTextPrimary"
+                android:textSize="15sp"
+                android:layout_marginStart="18dp"/>
+        </LinearLayout>
+
+        <!-- Update pill (shown dynamically) -->
         <Button
             android:id="@+id/updateBtn"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="⬆ Update available"
-            android:textColor="?attr/daymarkTextPrimary"
+            android:textColor="@color/primary_dark"
             android:textStyle="bold"
             android:textAllCaps="false"
             android:background="@drawable/bg_update_pill"
-            android:paddingLeft="22dp"
-            android:paddingRight="22dp"
-            android:minWidth="0dp"
+            android:layout_margin="14dp"
             android:minHeight="0dp"
-            android:layout_marginTop="14dp"
-            android:elevation="3dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
             android:visibility="gone"/>
 
+        <!-- Spacer -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+
+        <!-- Footer version -->
+        <TextView
+            android:id="@+id/versionFooter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Daymark v2.1.0"
+            android:textColor="?attr/daymarkTextSecondary"
+            android:textSize="11sp"
+            android:padding="18dp"
+            android:gravity="start"/>
     </LinearLayout>
-
-    <GridView
-        android:id="@+id/gridButtons"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:numColumns="2"
-        android:horizontalSpacing="8dp"
-        android:verticalSpacing="8dp"
-        android:stretchMode="columnWidth"
-        android:paddingLeft="14dp"
-        android:paddingRight="14dp"
-        android:paddingBottom="16dp"
-        android:clipToPadding="false"
-        android:scrollbars="none"/>
-
-</LinearLayout>
+</FrameLayout>
