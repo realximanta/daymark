@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:paddingStart="32dp"
+    android:paddingEnd="32dp"
+    android:background="?attr/daymarkBackground">
+
+    <!-- 🔐 Emoji badge -->
+    <TextView
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:gravity="center"
+        android:background="@drawable/bg_icon_badge"
+        android:text="🔐"
+        android:textSize="30sp" />
+
+    <!-- 🏷️ Heading -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Welcome back"
+        android:textSize="30sp"
+        android:fontFamily="serif"
+        android:textStyle="bold"
+        android:textColor="?attr/daymarkTextPrimary"
+        android:gravity="center"
+        android:layout_marginTop="22dp" />
+
+    <!-- 📝 Subtitle -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Enter your private passcode to keep Daymark yours alone."
+        android:textSize="13sp"
+        android:textColor="?attr/daymarkTextSecondary"
+        android:gravity="center"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="32dp" />
+
+    <!-- 🔑 Input field -->
+    <EditText
+        android:id="@+id/passcodeInput"
+        android:layout_width="match_parent"
+        android:layout_height="54dp"
+        android:hint="Passcode"
+        android:inputType="textPassword"
+        android:singleLine="true"
+        android:background="@drawable/bg_input"
+        android:paddingStart="17dp"
+        android:paddingEnd="17dp"
+        android:textSize="14sp"
+        android:textColor="?attr/daymarkTextPrimary"
+        android:textColorHint="?attr/daymarkTextSecondary" />
+
+    <!-- ⚠️ Inline error (hidden by default) -->
+    <TextView
+        android:id="@+id/passcodeError"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#C0392B"
+        android:textSize="12sp"
+        android:layout_marginTop="10dp"
+        android:visibility="gone" />
+
+    <!-- ✅ Primary action -->
+    <Button
+        android:id="@+id/savePasscodeBtn"
+        android:layout_width="match_parent"
+        android:layout_height="54dp"
+        android:text="Unlock Daymark"
+        android:textAllCaps="false"
+        android:textStyle="bold"
+        android:textSize="14sp"
+        android:textColor="#FFFFFF"
+        android:background="@drawable/bg_primary_button"
+        android:layout_marginTop="20dp" />
+
+    <!-- 🛡️ Privacy footnote -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="This passcode is stored on your device only, and is sent with every sync to protect your private journal."
+        android:textSize="11sp"
+        android:textColor="?attr/daymarkTextSecondary"
+        android:gravity="center"
+        android:layout_marginTop="18dp" />
+</LinearLayout>
