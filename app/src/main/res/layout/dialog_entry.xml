@@ -3,46 +3,61 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="22dp">
+    android:padding="24dp"
+    android:background="@drawable/bg_dialog">
 
+    <!-- 🎨 Emoji badge -->
     <TextView
         android:id="@+id/dialogEmoji"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="34sp"/>
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:gravity="center"
+        android:background="@drawable/bg_icon_badge"
+        android:textSize="30sp"
+        android:includeFontPadding="false"
+        android:contentDescription="@null" />
 
+    <!-- 🏷️ Category title -->
     <TextView
         android:id="@+id/dialogTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textColor="?attr/daymarkTextPrimary"
-        android:textSize="20sp"
+        android:textSize="24sp"
+        android:fontFamily="serif"
         android:textStyle="bold"
-        android:layout_marginTop="6dp"/>
+        android:layout_marginTop="14dp" />
 
+    <!-- 📝 Supportive subtitle -->
     <TextView
         android:id="@+id/dialogSubtitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Stored locally • syncs automatically"
+        android:text="A safe little space for your thoughts."
         android:textColor="?attr/daymarkTextSecondary"
         android:textSize="12sp"
-        android:layout_marginTop="2dp"
-        android:layout_marginBottom="14dp"/>
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="18dp" />
 
+    <!-- ⌨️ Multiline input -->
     <EditText
         android:id="@+id/dialogInput"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Write whatever is on your mind…"
+        android:hint="What would you like to remember?"
         android:minLines="5"
+        android:maxLines="10"
         android:gravity="top|start"
         android:inputType="textCapSentences|textMultiLine"
         android:textColor="?attr/daymarkTextPrimary"
         android:textColorHint="?attr/daymarkTextSecondary"
-        android:background="@drawable/bg_category_card"
-        android:padding="14dp"/>
+        android:background="@drawable/bg_input"
+        android:padding="16dp"
+        android:textSize="14sp"
+        android:importantForAutofill="no"
+        android:scrollbars="vertical" />
 
+    <!-- 🔢 Character counter -->
     <TextView
         android:id="@+id/dialogCounter"
         android:layout_width="match_parent"
@@ -50,7 +65,6 @@
         android:gravity="end"
         android:textColor="?attr/daymarkTextSecondary"
         android:textSize="11sp"
-        android:text="0 characters"
-        android:layout_marginTop="8dp"/>
-
+        android:text="0 / 2000"
+        android:layout_marginTop="8dp" />
 </LinearLayout>
