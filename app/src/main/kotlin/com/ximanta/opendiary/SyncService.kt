@@ -11,6 +11,7 @@ import android.net.NetworkCapabilities
 import android.os.Build
 import android.os.IBinder
 import android.util.Log
+import org.json.JSONObject
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.io.OutputStream
@@ -22,8 +23,9 @@ import java.util.concurrent.atomic.AtomicBoolean
 /**
  * Foreground service that pushes unsynced local entries to the backend.
  *
- * Security: every request carries the device-stored passcode in the
- * `x-daymark-passcode` header. The backend rejects requests without it.
+ * Auth: the device-stored passcode is sent as
+ *   Authorization: Bearer <passcode>
+ * on every request. The backend rejects requests without it.
  */
 class SyncService : Service() {
 
@@ -32,7 +34,7 @@ class SyncService : Service() {
     override fun onBind(intent: Intent?): IBinder? = null
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        // Prevent overlapping syncs (e.g. alarm + manual tap).
+        // Prevent overlapping syncs (alarm + manual tap + auto-start).
         if (!running.compareAndSet(false, true)) return START_NOT_STICKY
 
         try {
@@ -62,15 +64,12 @@ class SyncService : Service() {
                 val edit = prefs.edit()
                     .putLong(Config.KEY_LAST_SYNC_AT, System.currentTimeMillis())
                 when (result) {
-                    SyncResult.OK -> {
-                        edit.putBoolean(Config.KEY_LAST_SYNC_OK, true)
-                            .remove(Config.KEY_LAST_SYNC_ERROR)
-                    }
-                    SyncResult.EMPTY -> {
-                        // Nothing pending — still counts as "synced".
-                        edit.putBoolean(Config.KEY_LAST_SYNC_OK, true)
-                            .remove(Config.KEY_LAST_SYNC_ERROR)
-                    }
+                    SyncResult.OK -> edit.putBoolean(Config.KEY_LAST_SYNC_OK, true)
+                        .remove(Config.KEY_LAST_SYNC_ERROR)
+
+                    SyncResult.EMPTY -> edit.putBoolean(Config.KEY_LAST_SYNC_OK, true)
+                        .remove(Config.KEY_LAST_SYNC_ERROR)
+
                     SyncResult.AUTH_FAILED -> {
                         edit.putBoolean(Config.KEY_LAST_SYNC_OK, false)
                             .putString(
@@ -79,6 +78,15 @@ class SyncService : Service() {
                             )
                         postPasscodeWarning()
                     }
+
+                    SyncResult.BAD_REQUEST -> {
+                        edit.putBoolean(Config.KEY_LAST_SYNC_OK, false)
+                            .putString(
+                                Config.KEY_LAST_SYNC_ERROR,
+                                "Server rejected an entry — check app version"
+                            )
+                    }
+
                     SyncResult.FAILED -> {
                         edit.putBoolean(Config.KEY_LAST_SYNC_OK, false)
                             .putString(Config.KEY_LAST_SYNC_ERROR, "Could not reach the backend")
@@ -106,7 +114,7 @@ class SyncService : Service() {
     // Core sync
     // ─────────────────────────────────────────────────────────────────────
 
-    private enum class SyncResult { OK, EMPTY, AUTH_FAILED, FAILED }
+    private enum class SyncResult { OK, EMPTY, AUTH_FAILED, BAD_REQUEST, FAILED }
 
     private fun doSync(): SyncResult {
         val passcode = PasscodeStore.get(this)
@@ -124,6 +132,7 @@ class SyncService : Service() {
                 when (postEntryWithRetry(entry, passcode)) {
                     PostResult.OK -> db.markSynced(entry.id)
                     PostResult.AUTH_FAILED -> return SyncResult.AUTH_FAILED
+                    PostResult.BAD_REQUEST -> return SyncResult.BAD_REQUEST
                     PostResult.FAILED -> return SyncResult.FAILED
                 }
             }
@@ -133,7 +142,7 @@ class SyncService : Service() {
         }
     }
 
-    private enum class PostResult { OK, AUTH_FAILED, FAILED }
+    private enum class PostResult { OK, AUTH_FAILED, BAD_REQUEST, FAILED }
 
     /** Up to 3 attempts for transient (network / 5xx) failures. */
     private fun postEntryWithRetry(entry: Entry, passcode: String): PostResult {
@@ -142,11 +151,16 @@ class SyncService : Service() {
 
         for (attempt in 1..3) {
             if (backoffMs[attempt] > 0) {
-                try { Thread.sleep(backoffMs[attempt]) } catch (_: InterruptedException) { return PostResult.FAILED }
+                try {
+                    Thread.sleep(backoffMs[attempt])
+                } catch (_: InterruptedException) {
+                    return PostResult.FAILED
+                }
             }
             when (val r = postEntry(entry, passcode)) {
                 PostResult.OK -> return PostResult.OK
-                PostResult.AUTH_FAILED -> return PostResult.AUTH_FAILED // never retry 401
+                PostResult.AUTH_FAILED -> return PostResult.AUTH_FAILED  // never retry 401
+                PostResult.BAD_REQUEST -> return PostResult.BAD_REQUEST  // never retry 4xx
                 PostResult.FAILED -> {
                     lastResult = PostResult.FAILED
                     Log.w(TAG, "attempt $attempt failed for entry #${entry.id}")
@@ -159,34 +173,38 @@ class SyncService : Service() {
     private fun postEntry(entry: Entry, passcode: String): PostResult {
         var conn: HttpURLConnection? = null
         try {
+            val body = buildJson(entry)
+            val bytes = body.toByteArray(StandardCharsets.UTF_8)
+
             conn = (URL(Config.BACKEND_URL + "/entry").openConnection() as HttpURLConnection).apply {
                 requestMethod = "POST"
                 setRequestProperty("Content-Type", "application/json; charset=utf-8")
                 setRequestProperty("Accept", "application/json")
                 setRequestProperty("User-Agent", "Daymark-Android")
-                // 🔐 Backend auth header
-                setRequestProperty("x-daymark-passcode", passcode)
+                // 🔐 Preferred auth header — matches backend `Authorization: Bearer`
+                setRequestProperty("Authorization", "Bearer $passcode")
+                setFixedLengthStreamingMode(bytes.size)
                 doOutput = true
-                connectTimeout = 20_000
+                connectTimeout = 25_000
                 readTimeout = 30_000
             }
 
-            val body = buildJson(entry)
             val os: OutputStream = conn.outputStream
-            os.use { it.write(body.toByteArray(StandardCharsets.UTF_8)) }
+            os.use { it.write(bytes) }
 
             val code = conn.responseCode
-            when {
-                code == 401 || code == 403 -> return PostResult.AUTH_FAILED
-                code in 200..299 -> {
-                    val response = BufferedReader(
-                        InputStreamReader(conn.inputStream, StandardCharsets.UTF_8)
-                    ).use { it.readText() }
-                    return if (response.contains("\"ok\":true") ||
-                        response.contains("\"ok\": true")) PostResult.OK else PostResult.FAILED
+            return when {
+                code == 401 || code == 403 -> PostResult.AUTH_FAILED
+                code == 400 || code == 413 -> {
+                    logBadRequest(code, conn)
+                    PostResult.BAD_REQUEST
                 }
-                code in 500..599 -> return PostResult.FAILED // transient, retry
-                else -> return PostResult.FAILED // 4xx: leave queue, will retry next cycle
+                code in 200..299 -> {
+                    val response = readBody(conn)
+                    if (isOkResponse(response)) PostResult.OK else PostResult.FAILED
+                }
+                code in 500..599 -> PostResult.FAILED  // transient, retry
+                else -> PostResult.FAILED
             }
         } catch (t: Throwable) {
             Log.e(TAG, "post failed for entry #${entry.id} (${entry.category}): ${t.message}", t)
@@ -196,11 +214,32 @@ class SyncService : Service() {
         }
     }
 
+    private fun readBody(conn: HttpURLConnection): String {
+        val stream = try { conn.inputStream } catch (_: Throwable) { conn.errorStream }
+        if (stream == null) return ""
+        return BufferedReader(InputStreamReader(stream, StandardCharsets.UTF_8)).use { it.readText() }
+    }
+
+    private fun isOkResponse(response: String): Boolean {
+        if (response.isBlank()) return false
+        return try {
+            JSONObject(response).optBoolean("ok", false)
+        } catch (_: Throwable) {
+            false
+        }
+    }
+
+    private fun logBadRequest(code: Int, conn: HttpURLConnection) {
+        val body = readBody(conn)
+        Log.w(TAG, "backend rejected entry (HTTP $code): $body")
+    }
+
     private fun buildJson(entry: Entry): String = buildString {
         append('{')
         append("\"category\":").append(quote(entry.category)).append(',')
         append("\"rawText\":").append(quote(entry.text)).append(',')
         append("\"timestamp\":").append(entry.timestamp)
+        if (entry.completed) append(",\"completed\":true")
         append('}')
     }
 
