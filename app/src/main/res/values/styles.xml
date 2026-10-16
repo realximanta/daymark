@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <!-- ═══════════════════════════════════════════
+    <!-- ═══════════════════════════════════════════════════════════════
          LIGHT THEME
-         ═══════════════════════════════════════════ -->
+         ═══════════════════════════════════════════════════════════════ -->
     <style name="AppTheme" parent="@android:style/Theme.Material.Light.NoActionBar">
         <item name="android:statusBarColor">@color/background</item>
         <item name="android:windowLightStatusBar">true</item>
@@ -14,7 +14,7 @@
         <item name="android:colorAccent">@color/primary</item>
         <item name="android:windowActionModeOverlay">true</item>
 
-        <!-- ═══ Daymark theme attrs ═══ -->
+        <!-- Daymark theme attrs -->
         <item name="daymarkBackground">@color/background</item>
         <item name="daymarkSurface">@color/card</item>
         <item name="daymarkStroke">@color/card_stroke</item>
@@ -28,9 +28,9 @@
         <item name="daymarkCornerRadius">22dp</item>
     </style>
 
-    <!-- ═══════════════════════════════════════════
+    <!-- ═══════════════════════════════════════════════════════════════
          DARK THEME
-         ═══════════════════════════════════════════ -->
+         ═══════════════════════════════════════════════════════════════ -->
     <style name="AppTheme.Dark" parent="@android:style/Theme.Material.NoActionBar">
         <item name="android:statusBarColor">@color/background_dark</item>
         <item name="android:windowLightStatusBar">false</item>
@@ -41,7 +41,7 @@
         <item name="android:colorAccent">@color/accent_dark</item>
         <item name="android:windowActionModeOverlay">true</item>
 
-        <!-- ═══ Daymark theme attrs ═══ -->
+        <!-- Daymark theme attrs -->
         <item name="daymarkBackground">@color/background_dark</item>
         <item name="daymarkSurface">@color/surface_dark</item>
         <item name="daymarkStroke">@color/stroke_dark</item>
@@ -55,34 +55,15 @@
         <item name="daymarkCornerRadius">22dp</item>
     </style>
 
-    <!-- ═══════════════════════════════════════════
-         REUSABLE DRAWER ITEM
-         ═══════════════════════════════════════════ -->
-    <style name="DrawerItem">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:orientation">horizontal</item>
-        <item name="android:gravity">center_vertical</item>
-        <item name="android:clickable">true</item>
-        <item name="android:focusable">true</item>
-        <item name="android:paddingStart">22dp</item>
-        <item name="android:paddingTop">16dp</item>
-        <item name="android:paddingBottom">16dp</item>
-        <item name="android:background">?android:attr/selectableItemBackground</item>
-    </style>
+    <!-- ═══════════════════════════════════════════════════════════════
+         TEXT STYLE ANCHOR
+         (empty parent so Text.Daymark.* children resolve)
+         ═══════════════════════════════════════════════════════════════ -->
+    <style name="Text.Daymark" />
 
-    <style name="DrawerFooter">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:textColor">?attr/daymarkTextSecondary</item>
-        <item name="android:textSize">11sp</item>
-        <item name="android:padding">22dp</item>
-        <item name="android:gravity">start</item>
-    </style>
-
-    <!-- ═══════════════════════════════════════════
+    <!-- ═══════════════════════════════════════════════════════════════
          TYPOGRAPHY STYLES
-         ═══════════════════════════════════════════ -->
+         ═══════════════════════════════════════════════════════════════ -->
     <style name="TextHeadline">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
@@ -118,9 +99,17 @@
         <item name="android:textColor">?attr/daymarkTextSecondary</item>
     </style>
 
-    <!-- ═══════════════════════════════════════════
+    <!-- ═══════════════════════════════════════════════════════════════
+         WIDGET STYLE ANCHOR  ← 🔑 THE MISSING PIECE
+         AAPT2 requires the parent "Widget.Daymark" to exist before
+         "Widget.Daymark.Input" / "Widget.Daymark.Switch" can be
+         linked. Empty body is intentional.
+         ═══════════════════════════════════════════════════════════════ -->
+    <style name="Widget.Daymark" />
+
+    <!-- ═══════════════════════════════════════════════════════════════
          WIDGET STYLES
-         ═══════════════════════════════════════════ -->
+         ═══════════════════════════════════════════════════════════════ -->
     <style name="Widget.Daymark.Input">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">54dp</item>
@@ -135,6 +124,31 @@
     <style name="Widget.Daymark.Switch" parent="@android:style/Widget.Material.CompoundButton.Switch">
         <item name="android:textColor">?attr/daymarkTextPrimary</item>
         <item name="android:textSize">15sp</item>
+    </style>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         DRAWER STYLES
+         ═══════════════════════════════════════════════════════════════ -->
+    <style name="DrawerItem">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+        <item name="android:paddingStart">22dp</item>
+        <item name="android:paddingTop">16dp</item>
+        <item name="android:paddingBottom">16dp</item>
+        <item name="android:background">?android:attr/selectableItemBackground</item>
+    </style>
+
+    <style name="DrawerFooter">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">?attr/daymarkTextSecondary</item>
+        <item name="android:textSize">11sp</item>
+        <item name="android:padding">22dp</item>
+        <item name="android:gravity">start</item>
     </style>
 
 </resources>
