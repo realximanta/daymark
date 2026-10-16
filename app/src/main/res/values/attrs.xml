@@ -1,10 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- ═══ Surface & background colors ═══ -->
     <attr name="daymarkBackground" format="color" />
     <attr name="daymarkSurface" format="color" />
     <attr name="daymarkStroke" format="color" />
+    <attr name="daymarkDivider" format="color" />
+
+    <!-- ═══ Typography colors ═══ -->
     <attr name="daymarkTextPrimary" format="color" />
     <attr name="daymarkTextSecondary" format="color" />
+
+    <!-- ═══ Brand & interaction ═══ -->
     <attr name="daymarkAccent" format="color" />
     <attr name="daymarkRipple" format="color" />
+    <attr name="daymarkScrim" format="color" />
+
+    <!-- ═══ Shared dimensions ═══ -->
+    <attr name="daymarkElevation" format="dimension" />
+    <attr name="daymarkCornerRadius" format="dimension" />
 </resources>
