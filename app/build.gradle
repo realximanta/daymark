@@ -9,7 +9,7 @@ android {
         applicationId "com.ximanta.opendiary"
         minSdk 26
         targetSdk 34
-        versionCode 7
+        versionCode 8
         versionName "2.2.0"
     }
 
@@ -25,8 +25,9 @@ android {
     sourceSets {
         main {
             manifest.srcFile 'src/main/AndroidManifest.xml'
-            java.srcDirs = ['src/main/kotlin']
+            // All Kotlin (and any stray .java) lives here.
             kotlin.srcDirs = ['src/main/kotlin']
+            java.srcDirs = ['src/main/kotlin']
             res.srcDirs = ['src/main/res']
         }
     }
@@ -45,5 +46,11 @@ android {
     }
 }
 
+// No external dependencies. The app intentionally uses only:
+//   - Android framework (android.*, org.json.*, java.net.*, java.text.*)
+//   - Kotlin stdlib (provided by the Kotlin Gradle plugin / build.sh)
+// This keeps the fallback build.sh pipeline working without a
+// dependency resolver. Add deps here only if you migrate to a
+// standard Gradle build environment.
 dependencies {
 }
