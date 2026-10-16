@@ -14,7 +14,6 @@
         <item name="android:colorAccent">@color/primary</item>
         <item name="android:windowActionModeOverlay">true</item>
 
-        <!-- Daymark theme attrs -->
         <item name="daymarkBackground">@color/background</item>
         <item name="daymarkSurface">@color/card</item>
         <item name="daymarkStroke">@color/card_stroke</item>
@@ -41,7 +40,6 @@
         <item name="android:colorAccent">@color/accent_dark</item>
         <item name="android:windowActionModeOverlay">true</item>
 
-        <!-- Daymark theme attrs -->
         <item name="daymarkBackground">@color/background_dark</item>
         <item name="daymarkSurface">@color/surface_dark</item>
         <item name="daymarkStroke">@color/stroke_dark</item>
@@ -56,13 +54,7 @@
     </style>
 
     <!-- ═══════════════════════════════════════════════════════════════
-         TEXT STYLE ANCHOR
-         (empty parent so Text.Daymark.* children resolve)
-         ═══════════════════════════════════════════════════════════════ -->
-    <style name="Text.Daymark" />
-
-    <!-- ═══════════════════════════════════════════════════════════════
-         TYPOGRAPHY STYLES
+         TEXT STYLES  (no dotted names → no implicit parents)
          ═══════════════════════════════════════════════════════════════ -->
     <style name="TextHeadline">
         <item name="android:layout_width">match_parent</item>
@@ -100,16 +92,13 @@
     </style>
 
     <!-- ═══════════════════════════════════════════════════════════════
-         WIDGET STYLE ANCHOR  ← 🔑 THE MISSING PIECE
-         AAPT2 requires the parent "Widget.Daymark" to exist before
-         "Widget.Daymark.Input" / "Widget.Daymark.Switch" can be
-         linked. Empty body is intentional.
-         ═══════════════════════════════════════════════════════════════ -->
-    <style name="Widget.Daymark" />
-
-    <!-- ═══════════════════════════════════════════════════════════════
          WIDGET STYLES
+         FIX: parent="" breaks the implicit Widget.* chain AAPT2 was
+              walking. Without it, AAPT2 looks for a style literally
+              named "Widget" and aborts the build.
          ═══════════════════════════════════════════════════════════════ -->
+    <style name="Widget.Daymark" parent="" />  <!-- FIX -->
+
     <style name="Widget.Daymark.Input">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">54dp</item>
