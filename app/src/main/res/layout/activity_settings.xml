@@ -2,75 +2,154 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fillViewport="true"
     android:background="?attr/daymarkBackground">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="20dp">
+
+        <!-- ═══ Header ═══ -->
         <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/settings"
-            android:textColor="?attr/daymarkTextPrimary"
-            android:textSize="25sp"
-            android:textStyle="bold" />
-        <Switch
-            android:id="@+id/reminderSwitch"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/reminders"
-            android:textColor="?attr/daymarkTextPrimary"
-            android:layout_marginTop="22dp" />
+            style="@style/TextSectionLabel"
+            android:text="MAKE IT YOURS"
+            android:layout_marginTop="5dp" />
+
         <TextView
-            android:id="@+id/reminderTime"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="9:00 PM"
+            style="@style/TextHeadline"
+            android:text="Preferences"
+            android:layout_marginTop="8dp" />
+
+        <TextView
+            style="@style/TextBody"
+            android:text="A journal that feels like you."
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="24dp" />
+
+        <!-- ═══ YOUR ROUTINE ═══ -->
+        <TextView
+            style="@style/TextSectionLabel"
+            android:text="YOUR ROUTINE"
             android:textColor="?attr/daymarkTextSecondary"
-            android:textSize="14sp"
-            android:paddingTop="6dp"
-            android:paddingBottom="14dp"
+            android:layout_marginBottom="11dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="18dp"
+            android:background="@drawable/bg_list_item">
+
+            <Switch
+                android:id="@+id/reminderSwitch"
+                style="@style/Widget.Daymark.Switch"
+                android:text="Daily reminders" />
+
+            <TextView
+                style="@style/TextBody"
+                android:text="A gentle nudge to reflect each day."
+                android:textSize="12sp"
+                android:layout_marginTop="8dp" />
+
+            <TextView
+                android:id="@+id/reminderTime"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="9:00 PM"
+                android:textStyle="bold"
+                android:textSize="14sp"
+                android:textColor="?attr/daymarkAccent"
+                android:paddingTop="18dp"
+                android:paddingBottom="5dp"
+                android:clickable="true"
+                android:focusable="true" />
+        </LinearLayout>
+
+        <!-- ═══ APPEARANCE ═══ -->
+        <TextView
+            style="@style/TextSectionLabel"
+            android:text="APPEARANCE"
+            android:textColor="?attr/daymarkTextSecondary"
+            android:layout_marginTop="26dp"
+            android:layout_marginBottom="11dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="18dp"
+            android:background="@drawable/bg_list_item">
+
+            <TextView
+                android:id="@+id/themeSetting"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Color theme"
+                android:textColor="?attr/daymarkTextPrimary"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:paddingBottom="8dp"
+                android:clickable="true"
+                android:focusable="true" />
+
+            <TextView
+                android:id="@+id/themeSummary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="System default"
+                android:textColor="?attr/daymarkTextSecondary"
+                android:textSize="13sp" />
+        </LinearLayout>
+
+        <!-- ═══ SECURITY ═══ -->
+        <TextView
+            style="@style/TextSectionLabel"
+            android:text="SECURITY"
+            android:textColor="?attr/daymarkTextSecondary"
+            android:layout_marginTop="26dp"
+            android:layout_marginBottom="11dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="18dp"
+            android:background="@drawable/bg_list_item"
             android:clickable="true"
-            android:focusable="true" />
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/reminders_summary"
-            android:textColor="?attr/daymarkTextSecondary"
-            android:textSize="12sp" />
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="?attr/daymarkStroke"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="4dp" />
-        <TextView
-            android:id="@+id/themeSetting"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/theme"
-            android:textColor="?attr/daymarkTextPrimary"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:paddingTop="18dp"
-            android:paddingBottom="4dp"
-            android:clickable="true"
-            android:focusable="true" />
-        <TextView
-            android:id="@+id/themeSummary"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/system"
-            android:textColor="?attr/daymarkTextSecondary"
-            android:textSize="13sp" />
+            android:focusable="true">
+
+            <TextView
+                android:id="@+id/passcodeReset"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="🔐  Reset passcode"
+                android:textColor="?attr/daymarkTextPrimary"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:paddingBottom="8dp"
+                android:clickable="true"
+                android:focusable="true" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Your passcode is stored on this device only. Resetting will require you to enter it again on next launch."
+                android:textColor="?attr/daymarkTextSecondary"
+                android:textSize="12sp"
+                android:lineSpacingExtra="2dp" />
+        </LinearLayout>
+
+        <!-- ═══ Sync endpoint (informational) ═══ -->
         <TextView
             android:id="@+id/syncEndpoint"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Backend: connected endpoint configured"
+            android:text="Sync endpoint configured"
             android:textColor="?attr/daymarkTextSecondary"
-            android:textSize="12sp"
-            android:paddingTop="28dp" />
+            android:textSize="11sp"
+            android:paddingTop="28dp"
+            android:paddingBottom="16dp" />
     </LinearLayout>
 </ScrollView>
