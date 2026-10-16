@@ -3,40 +3,129 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="12dp"
+    android:paddingStart="20dp"
+    android:paddingEnd="20dp"
+    android:paddingTop="24dp"
     android:background="?attr/daymarkBackground">
+
+    <!-- 📖 Header block -->
+    <TextView
+        style="@style/TextSectionLabel"
+        android:text="MAKE IT HAPPEN" />
 
     <TextView
         android:id="@+id/tasksTitle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:textColor="?attr/daymarkTextPrimary"
-        android:paddingBottom="8dp"/>
+        style="@style/TextHeadline"
+        android:layout_marginTop="8dp" />
 
+    <TextView
+        style="@style/TextBody"
+        android:text="Take the next step, one note at a time."
+        android:layout_marginTop="6dp"
+        android:layout_marginBottom="22dp" />
+
+    <!-- ⌨️ Input + Add row -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
 
         <EditText
             android:id="@+id/taskInput"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="54dp"
             android:layout_weight="1"
-            android:hint="New task"/>
+            android:hint="Add something to remember"
+            android:singleLine="true"
+            android:inputType="textCapSentences"
+            android:imeOptions="actionDone"
+            android:background="@drawable/bg_input"
+            android:paddingStart="14dp"
+            android:paddingEnd="10dp"
+            android:textSize="13sp"
+            android:textColor="?attr/daymarkTextPrimary"
+            android:textColorHint="?attr/daymarkTextSecondary" />
 
         <Button
             android:id="@+id/addTaskBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Add"/>
+            android:layout_width="76dp"
+            android:layout_height="54dp"
+            android:layout_marginStart="10dp"
+            android:background="@drawable/bg_primary_button"
+            android:text="Add"
+            android:textAllCaps="false"
+            android:textStyle="bold"
+            android:textSize="14sp"
+            android:textColor="#FFFFFF" />
     </LinearLayout>
 
+    <!-- 💡 Swipe hint -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Swipe a task left to delete"
+        android:textSize="11sp"
+        android:textColor="?attr/daymarkTextSecondary"
+        android:paddingStart="4dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="4dp" />
+
+    <!-- 📝 Section label -->
+    <TextView
+        style="@style/TextSectionLabel"
+        android:text="YOUR NOTES"
+        android:textColor="?attr/daymarkTextSecondary"
+        android:layout_marginTop="18dp"
+        android:layout_marginBottom="12dp" />
+
+    <!-- 📭 Empty state -->
+    <LinearLayout
+        android:id="@+id/tasksEmpty"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="32dp"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="📝"
+            android:textSize="56sp"
+            android:includeFontPadding="false" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Nothing here yet."
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:textColor="?attr/daymarkTextPrimary"
+            android:gravity="center"
+            android:layout_marginTop="16dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Add your first note above."
+            android:textSize="13sp"
+            android:textColor="?attr/daymarkTextSecondary"
+            android:gravity="center"
+            android:layout_marginTop="4dp" />
+    </LinearLayout>
+
+    <!-- 📋 Task list -->
     <ListView
         android:id="@+id/taskList"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
-
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="10dp"
+        android:paddingBottom="24dp"
+        android:clipToPadding="false"
+        android:scrollbars="none" />
 </LinearLayout>
