@@ -2,30 +2,64 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="14dp"
-    android:background="?attr/daymarkSurface">
-    <TextView
-        android:id="@+id/historyCategory"
-        android:layout_width="match_parent"
+    android:orientation="horizontal"
+    android:background="@drawable/bg_list_item">
+
+    <!-- 📌 Left accent spine -->
+    <View
+        android:layout_width="3dp"
+        android:layout_height="match_parent"
+        android:background="?attr/daymarkAccent"
+        android:layout_marginTop="14dp"
+        android:layout_marginBottom="14dp" />
+
+    <!-- 📄 Entry content -->
+    <LinearLayout
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:textColor="?attr/daymarkTextPrimary"
-        android:textStyle="bold"
-        android:textSize="15sp" />
-    <TextView
-        android:id="@+id/historyDate"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="?attr/daymarkTextSecondary"
-        android:textSize="12sp"
-        android:layout_marginTop="3dp" />
-    <TextView
-        android:id="@+id/historyText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="?attr/daymarkTextPrimary"
-        android:textSize="14sp"
-        android:maxLines="4"
-        android:ellipsize="end"
-        android:layout_marginTop="8dp" />
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:paddingStart="15dp"
+        android:paddingEnd="18dp"
+        android:paddingTop="18dp"
+        android:paddingBottom="18dp">
+
+        <!-- 🏷️ Category -->
+        <TextView
+            android:id="@+id/historyCategory"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="?attr/daymarkAccent"
+            android:textStyle="bold"
+            android:textSize="15sp"
+            android:fontFamily="serif"
+            android:letterSpacing="0.01"
+            android:singleLine="true"
+            android:ellipsize="end" />
+
+        <!-- 🕒 Date + sync status -->
+        <TextView
+            android:id="@+id/historyDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="?attr/daymarkTextSecondary"
+            android:textSize="11sp"
+            android:letterSpacing="0.02"
+            android:layout_marginTop="6dp"
+            android:singleLine="true"
+            android:ellipsize="end" />
+
+        <!-- 📝 Entry excerpt -->
+        <TextView
+            android:id="@+id/historyText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="?attr/daymarkTextPrimary"
+            android:textSize="14sp"
+            android:lineSpacingExtra="3dp"
+            android:lineSpacingMultiplier="1.15"
+            android:maxLines="6"
+            android:ellipsize="end"
+            android:layout_marginTop="12dp" />
+    </LinearLayout>
 </LinearLayout>
