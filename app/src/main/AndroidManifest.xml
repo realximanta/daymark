@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.ximanta.opendiary">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <uses-sdk android:minSdkVersion="26" android:targetSdkVersion="34"/>
-
+    <!-- ═══ Permissions ═══ -->
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
@@ -21,40 +19,74 @@
         android:supportsRtl="true"
         android:usesCleartextTraffic="false">
 
+        <!-- ═══════════════════════════════════════════════════════════
+             🚪 LAUNCHER — Passcode gate runs first
+             ═══════════════════════════════════════════════════════════ -->
         <activity
-            android:name="com.ximanta.opendiary.MainActivity"
+            android:name="com.ximanta.opendiary.PasscodeActivity"
             android:exported="true"
-            android:label="@string/app_name">
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
 
+        <!-- ═══════════════════════════════════════════════════════════
+             🏠 Main screen — reachable only after passcode unlock
+             ═══════════════════════════════════════════════════════════ -->
         <activity
-            android:name="com.ximanta.opendiary.TasksActivity"
+            android:name="com.ximanta.opendiary.MainActivity"
             android:exported="false"
-            android:label="@string/app_name"/>
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme"/>
 
+        <!-- ═══════════════════════════════════════════════════════════
+             📜 Journal history
+             ═══════════════════════════════════════════════════════════ -->
         <activity
             android:name="com.ximanta.opendiary.HistoryActivity"
             android:exported="false"
-            android:label="@string/app_name"/>
+            android:label="@string/history"
+            android:theme="@style/AppTheme"/>
 
+        <!-- ═══════════════════════════════════════════════════════════
+             ✅ Tasks / Plan for Tomorrow
+             ═══════════════════════════════════════════════════════════ -->
+        <activity
+            android:name="com.ximanta.opendiary.TasksActivity"
+            android:exported="false"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme"/>
+
+        <!-- ═══════════════════════════════════════════════════════════
+             ⚙️ Settings
+             ═══════════════════════════════════════════════════════════ -->
         <activity
             android:name="com.ximanta.opendiary.SettingsActivity"
             android:exported="false"
-            android:label="@string/app_name"/>
+            android:label="@string/settings"
+            android:theme="@style/AppTheme"/>
 
+        <!-- ═══════════════════════════════════════════════════════════
+             🔄 Foreground sync service
+             ═══════════════════════════════════════════════════════════ -->
         <service
             android:name="com.ximanta.opendiary.SyncService"
             android:exported="false"
             android:foregroundServiceType="dataSync"/>
 
+        <!-- ═══════════════════════════════════════════════════════════
+             🔔 Daily reminder broadcast receiver
+             ═══════════════════════════════════════════════════════════ -->
         <receiver
             android:name="com.ximanta.opendiary.ReminderReceiver"
             android:exported="false"/>
 
+        <!-- ═══════════════════════════════════════════════════════════
+             🚀 Boot-completed receiver — reschedules alarms
+             ═══════════════════════════════════════════════════════════ -->
         <receiver
             android:name="com.ximanta.opendiary.BootReceiver"
             android:exported="true">
@@ -64,6 +96,9 @@
             </intent-filter>
         </receiver>
 
+        <!-- ═══════════════════════════════════════════════════════════
+             📦 APK file provider — for in-app self-updates
+             ═══════════════════════════════════════════════════════════ -->
         <provider
             android:name="com.ximanta.opendiary.ApkFileProvider"
             android:authorities="com.ximanta.opendiary.fileprovider"
