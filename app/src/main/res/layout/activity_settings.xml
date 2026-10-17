@@ -141,7 +141,7 @@
                 android:lineSpacingExtra="2dp" />
         </LinearLayout>
 
-        <!-- ═══ Sync endpoint (informational) ═══ -->
+        <!-- ═══ Sync endpoint ═══ -->
         <TextView
             android:id="@+id/syncEndpoint"
             android:layout_width="match_parent"
