@@ -25,29 +25,29 @@ class SettingsActivity : Activity() {
         prefs = getSharedPreferences(Config.PREFS, MODE_PRIVATE)
 
         // ── 🔔 Reminders ────────────────────────────────────────────────
-        val reminderSwitch = findViewById<Switch>(rid("reminderSwitch", "id"))
-        reminderSwitch.isChecked =
-            prefs.getBoolean(Config.KEY_REMINDER_ENABLED, Config.DEFAULT_REMINDER_ENABLED)
-
-        reminderSwitch.setOnCheckedChangeListener { _: CompoundButton, checked: Boolean ->
-            prefs.edit().putBoolean(Config.KEY_REMINDER_ENABLED, checked).apply()
-            if (checked) {
-                AlarmScheduler.scheduleReminder(this, reminderHour(), reminderMinute())
-            } else {
-                AlarmScheduler.cancelReminder(this)
+        findViewById<Switch>(rid("reminderSwitch", "id"))?.let { switch ->
+            switch.isChecked =
+                prefs.getBoolean(Config.KEY_REMINDER_ENABLED, Config.DEFAULT_REMINDER_ENABLED)
+            switch.setOnCheckedChangeListener { _: CompoundButton, checked: Boolean ->
+                prefs.edit().putBoolean(Config.KEY_REMINDER_ENABLED, checked).apply()
+                if (checked) {
+                    AlarmScheduler.scheduleReminder(this, reminderHour(), reminderMinute())
+                } else {
+                    AlarmScheduler.cancelReminder(this)
+                }
             }
         }
 
         findViewById<TextView>(rid("reminderTime", "id"))
-            .setOnClickListener { chooseTime() }
+            ?.setOnClickListener { chooseTime() }
 
         // ── 🎨 Theme ────────────────────────────────────────────────────
         findViewById<TextView>(rid("themeSetting", "id"))
-            .setOnClickListener { chooseTheme() }
+            ?.setOnClickListener { chooseTheme() }
 
         // ── 🔐 Security → Reset passcode ────────────────────────────────
         findViewById<TextView>(rid("passcodeReset", "id"))
-            .setOnClickListener { confirmPasscodeReset() }
+            ?.setOnClickListener { confirmPasscodeReset() }
 
         refreshLabels()
     }
@@ -142,7 +142,6 @@ class SettingsActivity : Activity() {
 
     private fun performPasscodeReset() {
         PasscodeStore.clear(this)
-        // Relaunch the passcode gate with a clean task stack.
         val intent = Intent(this, PasscodeActivity::class.java).apply {
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
         }
@@ -162,7 +161,7 @@ class SettingsActivity : Activity() {
             set(Calendar.SECOND, 0)
             set(Calendar.MILLISECOND, 0)
         }
-        findViewById<TextView>(rid("reminderTime", "id")).text =
+        findViewById<TextView>(rid("reminderTime", "id"))?.text =
             DateFormat.getTimeInstance(DateFormat.SHORT).format(calendar.time)
 
         // Theme summary
@@ -171,7 +170,7 @@ class SettingsActivity : Activity() {
             Config.THEME_DARK -> "Dark"
             else -> "System default"
         }
-        findViewById<TextView>(rid("themeSummary", "id")).text = themeSummary
+        findViewById<TextView>(rid("themeSummary", "id"))?.text = themeSummary
 
         // Sync status line
         val last = prefs.getLong(Config.KEY_LAST_SYNC_AT, 0L)
@@ -184,7 +183,7 @@ class SettingsActivity : Activity() {
             !ok -> "Last sync had an issue"
             else -> "Last sync: ${humanizeAge(last)} ago • OK"
         }
-        findViewById<TextView>(rid("syncEndpoint", "id")).text = syncText
+        findViewById<TextView>(rid("syncEndpoint", "id"))?.text = syncText
     }
 
     private fun humanizeAge(timestampMs: Long): String {
