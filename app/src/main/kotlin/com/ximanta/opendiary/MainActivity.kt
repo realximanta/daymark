@@ -59,7 +59,7 @@ class MainActivity : Activity() {
 
         setupDrawer()
         setupGrid()
-        setupVersionFooter()
+        setupVersionFooter() // <--- RESTORED CALL
         scheduleAlarms()
         maybeStartSync()
         checkForUpdates()
@@ -208,7 +208,7 @@ class MainActivity : Activity() {
         }, 120)
     }
 
-    // ── Stats ────────────────────────────────────────────────────────
+    // ── Stats & Footer ───────────────────────────────────────────────
     private fun refreshStats() {
         if (!::db.isInitialized) return
         val total = db.getEntryCount()
@@ -223,6 +223,13 @@ class MainActivity : Activity() {
             else -> "Sync not run yet"
         }
         findViewById<TextView>(rid("statsView", "id")).text = "$total entries • $status"
+    }
+
+    private fun setupVersionFooter() {
+        try {
+            val vn = packageManager.getPackageInfo(packageName, 0).versionName ?: "?"
+            findViewById<TextView>(rid("versionFooter", "id")).text = "Daymark v$vn"
+        } catch (_: Throwable) { }
     }
 
     private fun scheduleAlarms() {
