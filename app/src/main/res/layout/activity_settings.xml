@@ -44,6 +44,8 @@
             <Switch
                 android:id="@+id/reminderSwitch"
                 style="@style/Widget.Daymark.Switch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:text="Daily reminders" />
 
             <TextView
