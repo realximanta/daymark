@@ -10,6 +10,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.OvershootInterpolator
@@ -35,6 +36,7 @@ class MainActivity : Activity() {
     private val drawerWidthPx by lazy { (290 * resources.displayMetrics.density).toInt() }
 
     private var pendingUpdateTag: String? = null
+    private var downX = 0f
 
     private val categories = arrayOf(
         "Currently Doing", "What I Ate", "New Idea", "Schedule/Tasks", "Regret",
@@ -63,6 +65,32 @@ class MainActivity : Activity() {
         scheduleAlarms()
         maybeStartSync()
         checkForUpdates()
+    }
+
+    /**
+     * Swipe Right from left edge to open, Swipe Left on drawer to close.
+     */
+    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
+        if (ev != null) {
+            when (ev.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    downX = ev.x
+                }
+                MotionEvent.ACTION_UP -> {
+                    val deltaX = ev.x - downX
+                    
+                    // Open: Swipe right starting from the left 15% of the screen
+                    if (!drawerOpen && downX < resources.displayMetrics.widthPixels * 0.15f && deltaX > 150) {
+                        openDrawer()
+                    } 
+                    // Close: Swipe left anywhere on the screen if drawer is open
+                    else if (drawerOpen && deltaX < -150) {
+                        closeDrawer()
+                    }
+                }
+            }
+        }
+        return super.dispatchTouchEvent(ev)
     }
 
     private fun maybeStartSync() {
