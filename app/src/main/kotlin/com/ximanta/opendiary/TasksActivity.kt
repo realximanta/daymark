@@ -6,6 +6,7 @@ import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
+import android.widget.LinearLayout
 import android.widget.ListView
 import android.widget.TextView
 import android.widget.Toast
@@ -21,8 +22,10 @@ class TasksActivity : Activity() {
         resources.getIdentifier(name, type, packageName)
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+        // 🔥 FIX: Apply theme before super.onCreate
         applyTheme()
+
+        super.onCreate(savedInstanceState)
         setContentView(rid("activity_tasks", "layout"))
 
         val c = intent.getStringExtra("category")
@@ -34,7 +37,14 @@ class TasksActivity : Activity() {
         title.text = category
 
         val list = findViewById<ListView>(rid("taskList", "id"))
-        adapter = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, items)
+        
+        // 🔥 FIX: Use the custom item_task layout instead of the default Android one
+        adapter = ArrayAdapter<String>(
+            this, 
+            rid("item_task", "layout"), 
+            rid("taskText", "id"), 
+            items
+        )
         list.adapter = adapter
 
         val input = findViewById<EditText>(rid("taskInput", "id"))
@@ -74,10 +84,21 @@ class TasksActivity : Activity() {
             i++
         }
         adapter.notifyDataSetChanged()
+
+        // 🔥 FIX: Toggle empty state visibility
+        val emptyView = findViewById<LinearLayout>(rid("tasksEmpty", "id"))
+        val listView = findViewById<ListView>(rid("taskList", "id"))
+        if (items.isEmpty()) {
+            emptyView.visibility = View.VISIBLE
+            listView.visibility = View.GONE
+        } else {
+            emptyView.visibility = View.GONE
+            listView.visibility = View.VISIBLE
+        }
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        db.close()
+        if (::db.isInitialized) db.close()
     }
 }
