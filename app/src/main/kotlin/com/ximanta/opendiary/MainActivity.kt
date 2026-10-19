@@ -244,8 +244,9 @@ class MainActivity : Activity() {
     private fun applyThemeIfNeeded() {
         val mode = getSharedPreferences(Config.PREFS, Context.MODE_PRIVATE).getString(Config.KEY_THEME, Config.THEME_SYSTEM) ?: Config.THEME_SYSTEM
         val dark = mode == Config.THEME_DARK || (mode == Config.THEME_SYSTEM && (resources.configuration.uiMode and 0x30) == 0x20)
-        val styleId = resources.getIdentifier(if (dark) "AppTheme_Dark" else "AppTheme", "style", packageName)
-        if (styleId != 0) setTheme(styleId)
+        
+        // 🔥 FIX: Use direct R.style references.
+        setTheme(if (dark) R.style.AppTheme_Dark else R.style.AppTheme)
     }
 
     private fun currentThemeKey(): String = getSharedPreferences(Config.PREFS, Context.MODE_PRIVATE).getString(Config.KEY_THEME, Config.THEME_SYSTEM) ?: Config.THEME_SYSTEM
