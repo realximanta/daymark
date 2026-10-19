@@ -44,8 +44,10 @@ class HistoryActivity : Activity() {
         resources.getIdentifier(name, type, packageName)
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+        // 🔥 FIX: Apply theme before super.onCreate
         applyTheme()
+
+        super.onCreate(savedInstanceState)
         setContentView(rid("activity_history", "layout"))
         db = EntryDbHelper(this)
 
