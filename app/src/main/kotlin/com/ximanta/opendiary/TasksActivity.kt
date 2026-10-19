@@ -38,7 +38,7 @@ class TasksActivity : Activity() {
 
         val list = findViewById<ListView>(rid("taskList", "id"))
         
-        // 🔥 FIX: Use the custom item_task layout instead of the default Android one
+        // Use the custom item_task layout
         adapter = ArrayAdapter<String>(
             this, 
             rid("item_task", "layout"), 
@@ -71,8 +71,9 @@ class TasksActivity : Activity() {
             .getString(Config.KEY_THEME, Config.THEME_SYSTEM) ?: Config.THEME_SYSTEM
         val dark = mode == Config.THEME_DARK ||
             (mode == Config.THEME_SYSTEM && (resources.configuration.uiMode and 0x30) == 0x20)
-        val styleId = resources.getIdentifier(if (dark) "AppTheme_Dark" else "AppTheme", "style", packageName)
-        if (styleId != 0) setTheme(styleId)
+            
+        // 🔥 FIX: Use direct R.style references. No more silent failures.
+        setTheme(if (dark) R.style.AppTheme_Dark else R.style.AppTheme)
     }
 
     private fun reload() {
@@ -85,7 +86,7 @@ class TasksActivity : Activity() {
         }
         adapter.notifyDataSetChanged()
 
-        // 🔥 FIX: Toggle empty state visibility
+        // Toggle empty state visibility
         val emptyView = findViewById<LinearLayout>(rid("tasksEmpty", "id"))
         val listView = findViewById<ListView>(rid("taskList", "id"))
         if (items.isEmpty()) {
