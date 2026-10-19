@@ -5,13 +5,9 @@ import android.app.AlertDialog
 import android.app.TimePickerDialog
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
 import android.widget.CompoundButton
-import android.widget.LinearLayout
-import android.widget.ScrollView
 import android.widget.Switch
 import android.widget.TextView
-import android.widget.Toast
 import java.text.DateFormat
 import java.util.Calendar
 
@@ -23,23 +19,12 @@ class SettingsActivity : Activity() {
         resources.getIdentifier(name, type, packageName)
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+        // 🔥 FIX: Must be called BEFORE super.onCreate()
         applyTheme()
+
+        super.onCreate(savedInstanceState)
+        setContentView(rid("activity_settings", "layout"))
         prefs = getSharedPreferences(Config.PREFS, MODE_PRIVATE)
-
-        val layoutId = rid("activity_settings", "layout")
-        if (layoutId == 0) {
-            showFallbackScreen("Settings layout missing")
-            return
-        }
-
-        try {
-            setContentView(layoutId)
-        } catch (t: Throwable) {
-            // InflateException, Resources.NotFoundException, style resolution failure
-            showFallbackScreen("Settings could not load: ${t.message}")
-            return
-        }
 
         // ── Reminders ────────────────────────────────────────────────
         findViewById<Switch>(rid("reminderSwitch", "id"))?.let { switch ->
@@ -87,11 +72,8 @@ class SettingsActivity : Activity() {
         if (styleId != 0) setTheme(styleId)
     }
 
-    private fun reminderHour() =
-        prefs.getInt(Config.KEY_REMINDER_HOUR, Config.DEFAULT_REMINDER_HOUR)
-
-    private fun reminderMinute() =
-        prefs.getInt(Config.KEY_REMINDER_MIN, Config.DEFAULT_REMINDER_MIN)
+    private fun reminderHour() = prefs.getInt(Config.KEY_REMINDER_HOUR, Config.DEFAULT_REMINDER_HOUR)
+    private fun reminderMinute() = prefs.getInt(Config.KEY_REMINDER_MIN, Config.DEFAULT_REMINDER_MIN)
 
     private fun chooseTime() {
         TimePickerDialog(
@@ -115,16 +97,14 @@ class SettingsActivity : Activity() {
     private fun chooseTheme() {
         val modes = arrayOf("System default", "Light", "Dark")
         val values = arrayOf(Config.THEME_SYSTEM, Config.THEME_LIGHT, Config.THEME_DARK)
-        val selected = values
-            .indexOf(prefs.getString(Config.KEY_THEME, Config.THEME_SYSTEM))
-            .coerceAtLeast(0)
+        val selected = values.indexOf(prefs.getString(Config.KEY_THEME, Config.THEME_SYSTEM)).coerceAtLeast(0)
 
         AlertDialog.Builder(this)
             .setTitle("Theme")
             .setSingleChoiceItems(modes, selected) { dialog, which ->
                 prefs.edit().putString(Config.KEY_THEME, values[which]).apply()
                 dialog.dismiss()
-                recreate()
+                recreate() // Restarts the activity to apply the new theme
             }
             .setNegativeButton("Cancel", null)
             .show()
@@ -172,32 +152,5 @@ class SettingsActivity : Activity() {
             seconds < 86_400 -> "${seconds / 3600}h"
             else -> "${seconds / 86_400}d"
         }
-    }
-
-    /** Minimal fallback that never crashes, even if all resources are broken. */
-    private fun showFallbackScreen(message: String) {
-        val root = LinearLayout(this).apply {
-            orientation = LinearLayout.VERTICAL
-            setPadding(48, 96, 48, 48)
-            setBackgroundColor(0xFFF7F6F1.toInt())
-        }
-        root.addView(TextView(this).apply {
-            text = "Preferences unavailable"
-            textSize = 22f
-            setTextColor(0xFF1D2924.toInt())
-        })
-        root.addView(TextView(this).apply {
-            text = message
-            textSize = 14f
-            setPadding(0, 24, 0, 0)
-            setTextColor(0xFF5E6D65.toInt())
-        })
-        root.addView(TextView(this).apply {
-            text = "Please reinstall the app or report this."
-            textSize = 12f
-            setPadding(0, 16, 0, 0)
-            setTextColor(0xFF5E6D65.toInt())
-        })
-        setContentView(ScrollView(this).apply { addView(root) })
     }
 }
