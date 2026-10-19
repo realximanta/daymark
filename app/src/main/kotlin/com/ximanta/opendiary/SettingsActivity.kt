@@ -5,9 +5,13 @@ import android.app.AlertDialog
 import android.app.TimePickerDialog
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.CompoundButton
+import android.widget.LinearLayout
+import android.widget.ScrollView
 import android.widget.Switch
 import android.widget.TextView
+import android.widget.Toast
 import java.text.DateFormat
 import java.util.Calendar
 
@@ -21,10 +25,23 @@ class SettingsActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         applyTheme()
-        setContentView(rid("activity_settings", "layout"))
         prefs = getSharedPreferences(Config.PREFS, MODE_PRIVATE)
 
-        // ── 🔔 Reminders ────────────────────────────────────────────────
+        val layoutId = rid("activity_settings", "layout")
+        if (layoutId == 0) {
+            showFallbackScreen("Settings layout missing")
+            return
+        }
+
+        try {
+            setContentView(layoutId)
+        } catch (t: Throwable) {
+            // InflateException, Resources.NotFoundException, style resolution failure
+            showFallbackScreen("Settings could not load: ${t.message}")
+            return
+        }
+
+        // ── Reminders ────────────────────────────────────────────────
         findViewById<Switch>(rid("reminderSwitch", "id"))?.let { switch ->
             switch.isChecked =
                 prefs.getBoolean(Config.KEY_REMINDER_ENABLED, Config.DEFAULT_REMINDER_ENABLED)
@@ -41,13 +58,15 @@ class SettingsActivity : Activity() {
         findViewById<TextView>(rid("reminderTime", "id"))
             ?.setOnClickListener { chooseTime() }
 
-        // ── 🎨 Theme ────────────────────────────────────────────────────
+        // ── Theme ────────────────────────────────────────────────────
         findViewById<TextView>(rid("themeSetting", "id"))
             ?.setOnClickListener { chooseTheme() }
 
-        // ── 🔐 Security → Reset passcode ────────────────────────────────
-        findViewById<TextView>(rid("passcodeReset", "id"))
-            ?.setOnClickListener { confirmPasscodeReset() }
+        // ── Security → Passcode ──────────────────────────────────────
+        findViewById<TextView>(rid("passcodeSetup", "id"))
+            ?.setOnClickListener {
+                startActivity(Intent(this, PasscodeActivity::class.java))
+            }
 
         refreshLabels()
     }
@@ -56,10 +75,6 @@ class SettingsActivity : Activity() {
         super.onResume()
         refreshLabels()
     }
-
-    // ═══════════════════════════════════════════════════════════════════
-    // Theme
-    // ═══════════════════════════════════════════════════════════════════
 
     private fun applyTheme() {
         val mode = getSharedPreferences(Config.PREFS, MODE_PRIVATE)
@@ -71,10 +86,6 @@ class SettingsActivity : Activity() {
         )
         if (styleId != 0) setTheme(styleId)
     }
-
-    // ═══════════════════════════════════════════════════════════════════
-    // Reminders
-    // ═══════════════════════════════════════════════════════════════════
 
     private fun reminderHour() =
         prefs.getInt(Config.KEY_REMINDER_HOUR, Config.DEFAULT_REMINDER_HOUR)
@@ -101,10 +112,6 @@ class SettingsActivity : Activity() {
         ).show()
     }
 
-    // ═══════════════════════════════════════════════════════════════════
-    // Theme picker
-    // ═══════════════════════════════════════════════════════════════════
-
     private fun chooseTheme() {
         val modes = arrayOf("System default", "Light", "Dark")
         val values = arrayOf(Config.THEME_SYSTEM, Config.THEME_LIGHT, Config.THEME_DARK)
@@ -123,38 +130,9 @@ class SettingsActivity : Activity() {
             .show()
     }
 
-    // ═══════════════════════════════════════════════════════════════════
-    // Passcode reset
-    // ═══════════════════════════════════════════════════════════════════
-
-    private fun confirmPasscodeReset() {
-        AlertDialog.Builder(this)
-            .setTitle("Reset passcode?")
-            .setMessage(
-                "Your stored passcode will be wiped from this device. " +
-                    "You'll need to enter it again to keep syncing.\n\n" +
-                    "Entries already on GitHub are not affected."
-            )
-            .setNegativeButton("Cancel", null)
-            .setPositiveButton("Reset") { _, _ -> performPasscodeReset() }
-            .show()
-    }
-
-    private fun performPasscodeReset() {
-        PasscodeStore.clear(this)
-        val intent = Intent(this, PasscodeActivity::class.java).apply {
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-        }
-        startActivity(intent)
-        finish()
-    }
-
-    // ═══════════════════════════════════════════════════════════════════
-    // Label refresh
-    // ═══════════════════════════════════════════════════════════════════
-
     private fun refreshLabels() {
-        // Reminder time
+        if (!::prefs.isInitialized) return
+
         val calendar = Calendar.getInstance().apply {
             set(Calendar.HOUR_OF_DAY, reminderHour())
             set(Calendar.MINUTE, reminderMinute())
@@ -164,7 +142,6 @@ class SettingsActivity : Activity() {
         findViewById<TextView>(rid("reminderTime", "id"))?.text =
             DateFormat.getTimeInstance(DateFormat.SHORT).format(calendar.time)
 
-        // Theme summary
         val themeSummary = when (prefs.getString(Config.KEY_THEME, Config.THEME_SYSTEM)) {
             Config.THEME_LIGHT -> "Light"
             Config.THEME_DARK -> "Dark"
@@ -172,12 +149,13 @@ class SettingsActivity : Activity() {
         }
         findViewById<TextView>(rid("themeSummary", "id"))?.text = themeSummary
 
-        // Sync status line
         val last = prefs.getLong(Config.KEY_LAST_SYNC_AT, 0L)
         val ok = prefs.getBoolean(Config.KEY_LAST_SYNC_OK, true)
         val err = prefs.getString(Config.KEY_LAST_SYNC_ERROR, null)
+        val hasPass = PasscodeStore.hasPasscode(this)
 
         val syncText = when {
+            !hasPass -> "Passcode not set — sync will fail until you set it above."
             last == 0L -> "Sync endpoint configured • not run yet"
             !ok && err != null -> "Last sync failed • $err"
             !ok -> "Last sync had an issue"
@@ -194,5 +172,32 @@ class SettingsActivity : Activity() {
             seconds < 86_400 -> "${seconds / 3600}h"
             else -> "${seconds / 86_400}d"
         }
+    }
+
+    /** Minimal fallback that never crashes, even if all resources are broken. */
+    private fun showFallbackScreen(message: String) {
+        val root = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(48, 96, 48, 48)
+            setBackgroundColor(0xFFF7F6F1.toInt())
+        }
+        root.addView(TextView(this).apply {
+            text = "Preferences unavailable"
+            textSize = 22f
+            setTextColor(0xFF1D2924.toInt())
+        })
+        root.addView(TextView(this).apply {
+            text = message
+            textSize = 14f
+            setPadding(0, 24, 0, 0)
+            setTextColor(0xFF5E6D65.toInt())
+        })
+        root.addView(TextView(this).apply {
+            text = "Please reinstall the app or report this."
+            textSize = 12f
+            setPadding(0, 16, 0, 0)
+            setTextColor(0xFF5E6D65.toInt())
+        })
+        setContentView(ScrollView(this).apply { addView(root) })
     }
 }
