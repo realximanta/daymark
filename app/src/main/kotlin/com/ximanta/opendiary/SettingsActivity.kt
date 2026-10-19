@@ -66,10 +66,9 @@ class SettingsActivity : Activity() {
             .getString(Config.KEY_THEME, Config.THEME_SYSTEM) ?: Config.THEME_SYSTEM
         val dark = mode == Config.THEME_DARK ||
             (mode == Config.THEME_SYSTEM && (resources.configuration.uiMode and 0x30) == 0x20)
-        val styleId = resources.getIdentifier(
-            if (dark) "AppTheme_Dark" else "AppTheme", "style", packageName
-        )
-        if (styleId != 0) setTheme(styleId)
+            
+        // 🔥 FIX: Use direct R.style references. No more getIdentifier failing.
+        setTheme(if (dark) R.style.AppTheme_Dark else R.style.AppTheme)
     }
 
     private fun reminderHour() = prefs.getInt(Config.KEY_REMINDER_HOUR, Config.DEFAULT_REMINDER_HOUR)
