@@ -54,7 +54,7 @@
     </style>
 
     <!-- ═══════════════════════════════════════════════════════════════
-         TEXT STYLES  (no dotted names → no implicit parents)
+         TYPOGRAPHY
          ═══════════════════════════════════════════════════════════════ -->
     <style name="TextHeadline">
         <item name="android:layout_width">match_parent</item>
@@ -92,12 +92,9 @@
     </style>
 
     <!-- ═══════════════════════════════════════════════════════════════
-         WIDGET STYLES
-         FIX: parent="" breaks the implicit Widget.* chain AAPT2 was
-              walking. Without it, AAPT2 looks for a style literally
-              named "Widget" and aborts the build.
+         WIDGET ANCHOR  ← parent="" is mandatory
          ═══════════════════════════════════════════════════════════════ -->
-    <style name="Widget.Daymark" parent="" />  <!-- FIX -->
+    <style name="Widget.Daymark" parent="" />
 
     <style name="Widget.Daymark.Input">
         <item name="android:layout_width">match_parent</item>
@@ -116,7 +113,7 @@
     </style>
 
     <!-- ═══════════════════════════════════════════════════════════════
-         DRAWER STYLES
+         DRAWER
          ═══════════════════════════════════════════════════════════════ -->
     <style name="DrawerItem">
         <item name="android:layout_width">match_parent</item>
