@@ -24,18 +24,17 @@ import android.widget.TextView
 import android.widget.Toast
 
 class MainActivity : Activity() {
+
     private lateinit var db: EntryDbHelper
     private var updateInProgress = false
     private var appliedTheme = ""
 
-    // Drawer state
     private lateinit var drawer: LinearLayout
     private lateinit var scrim: View
     private lateinit var menuBtn: ImageButton
     private var drawerOpen = false
     private val drawerWidthPx by lazy { (290 * resources.displayMetrics.density).toInt() }
 
-    // Pending update info so drawer item can trigger it
     private var pendingUpdateTag: String? = null
 
     private val categories = arrayOf(
@@ -44,7 +43,8 @@ class MainActivity : Activity() {
     )
     private val icons = arrayOf("🏃", "🍽️", "💡", "✅", "😞", "🏆", "🚗", "📅", "🎬")
 
-    private fun rid(name: String, type: String): Int = resources.getIdentifier(name, type, packageName)
+    private fun rid(name: String, type: String): Int =
+        resources.getIdentifier(name, type, packageName)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,11 +61,27 @@ class MainActivity : Activity() {
         setupGrid()
         setupVersionFooter()
         scheduleAlarms()
-        startSyncService(this)
+        maybeStartSync()
         checkForUpdates()
     }
 
-    // ══════════════ DRAWER ══════════════
+    /**
+     * Only start sync if a passcode exists. Otherwise, the app works fully
+     * offline — the user sets the passcode in Preferences to enable sync.
+     */
+    private fun maybeStartSync() {
+        if (PasscodeStore.hasPasscode(this)) {
+            startSyncService(this)
+        } else {
+            Toast.makeText(
+                this,
+                "Tip: set your passcode in Preferences to enable syncing.",
+                Toast.LENGTH_LONG
+            ).show()
+        }
+    }
+
+    // ── Drawer ────────────────────────────────────────────────────────
     private fun setupDrawer() {
         drawer = findViewById(rid("navDrawer", "id"))
         scrim = findViewById(rid("scrim", "id"))
@@ -85,24 +101,36 @@ class MainActivity : Activity() {
             overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
         }
         findViewById<View>(rid("navSync", "id")).setOnClickListener {
-            val syncIcon = findViewById<ImageView>(rid("navSyncIcon", "id"))
-            spinView(syncIcon)
             closeDrawer()
-            startSyncService(this)
-            Toast.makeText(this, "Sync started", Toast.LENGTH_SHORT).show()
-            refreshStats()
+            if (PasscodeStore.hasPasscode(this)) {
+                startSyncService(this)
+                Toast.makeText(this, "Sync started", Toast.LENGTH_SHORT).show()
+                refreshStats()
+            } else {
+                Toast.makeText(
+                    this,
+                    "No passcode set. Open Preferences → Security to set one.",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
         }
 
         findViewById<Button>(rid("updateBtn", "id")).setOnClickListener {
             triggerUpdateInstall()
         }
 
-        // Top-right sync icon
         findViewById<ImageButton>(rid("syncIconBtn", "id")).setOnClickListener {
-            spinView(it as ImageView)
-            startSyncService(this)
-            Toast.makeText(this, "Sync started", Toast.LENGTH_SHORT).show()
-            refreshStats()
+            if (PasscodeStore.hasPasscode(this)) {
+                startSyncService(this)
+                Toast.makeText(this, "Sync started", Toast.LENGTH_SHORT).show()
+                refreshStats()
+            } else {
+                Toast.makeText(
+                    this,
+                    "No passcode set. Open Preferences → Security to set one.",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
         }
     }
 
@@ -112,13 +140,11 @@ class MainActivity : Activity() {
         scrim.visibility = View.VISIBLE
         scrim.alpha = 0f
         scrim.animate().alpha(1f).setDuration(220).start()
-
         drawer.animate()
             .translationX(0f)
             .setDuration(300)
             .setInterpolator(OvershootInterpolator(0.85f))
             .start()
-
         menuBtn.animate().rotation(90f).setDuration(260).start()
         menuBtn.postDelayed({ menuBtn.setImageResource(rid("ic_close", "drawable")) }, 90)
     }
@@ -139,7 +165,7 @@ class MainActivity : Activity() {
         if (drawerOpen) closeDrawer() else super.onBackPressed()
     }
 
-    // ══════════════ GRID ══════════════
+    // ── Grid ─────────────────────────────────────────────────────────
     private fun setupGrid() {
         val grid = findViewById<GridView>(rid("gridButtons", "id"))
         grid.adapter = CategoryAdapter()
@@ -182,18 +208,7 @@ class MainActivity : Activity() {
         }, 120)
     }
 
-    // ══════════════ UTILITIES ══════════════
-    private fun spinView(v: View) {
-        v.animate().rotationBy(360f).setDuration(900).start()
-    }
-
-    private fun setupVersionFooter() {
-        try {
-            val vn = packageManager.getPackageInfo(packageName, 0).versionName ?: "?"
-            findViewById<TextView>(rid("versionFooter", "id")).text = "Daymark v$vn"
-        } catch (_: Throwable) { }
-    }
-
+    // ── Stats ────────────────────────────────────────────────────────
     private fun refreshStats() {
         if (!::db.isInitialized) return
         val total = db.getEntryCount()
@@ -201,6 +216,7 @@ class MainActivity : Activity() {
         val prefs = getSharedPreferences(Config.PREFS, Context.MODE_PRIVATE)
         val last = prefs.getLong(Config.KEY_LAST_SYNC_AT, 0L)
         val status = when {
+            !PasscodeStore.hasPasscode(this) -> "Set passcode to sync"
             pending > 0 -> "$pending waiting to sync"
             last > 0L && !prefs.getBoolean(Config.KEY_LAST_SYNC_OK, true) -> "Sync needs attention"
             last > 0L -> "All synced"
@@ -234,7 +250,7 @@ class MainActivity : Activity() {
         getSharedPreferences(Config.PREFS, Context.MODE_PRIVATE)
             .getString(Config.KEY_THEME, Config.THEME_SYSTEM) ?: Config.THEME_SYSTEM
 
-    // ══════════════ UPDATES ══════════════
+    // ── Updates ──────────────────────────────────────────────────────
     private fun checkForUpdates() {
         val versionName = try { packageManager.getPackageInfo(packageName, 0).versionName ?: "0.0" }
         catch (_: Exception) { "0.0" }
@@ -257,7 +273,6 @@ class MainActivity : Activity() {
         closeDrawer()
         btn.postDelayed({
             btn.text = "Preparing…"
-            // Rebuild apkUrl via UpdateChecker — better: keep url too
             val versionName = try { packageManager.getPackageInfo(packageName, 0).versionName ?: "0.0" }
             catch (_: Exception) { "0.0" }
             UpdateChecker.check(versionName) { info2 ->
@@ -278,7 +293,7 @@ class MainActivity : Activity() {
         }, 250)
     }
 
-    // ══════════════ GRID ADAPTER ══════════════
+    // ── Grid adapter ─────────────────────────────────────────────────
     private inner class CategoryAdapter : BaseAdapter() {
         private val inflater = LayoutInflater.from(this@MainActivity)
         override fun getCount(): Int = categories.size
@@ -292,7 +307,7 @@ class MainActivity : Activity() {
         }
     }
 
-    // ══════════════ ENTRY DIALOG ══════════════
+    // ── Entry dialog ─────────────────────────────────────────────────
     private fun showEntryDialog(category: String, emoji: String) {
         val view = LayoutInflater.from(this).inflate(rid("dialog_entry", "layout"), null)
         val emojiView = view.findViewById<TextView>(rid("dialogEmoji", "id"))
@@ -306,7 +321,7 @@ class MainActivity : Activity() {
         input.addTextChangedListener(object : android.text.TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, a: Int, b: Int, c: Int) = Unit
             override fun onTextChanged(s: CharSequence?, a: Int, b: Int, c: Int) {
-                counter.text = "${s?.length ?: 0} characters"
+                counter.text = "${s?.length ?: 0} / 2000"
             }
             override fun afterTextChanged(s: android.text.Editable?) = Unit
         })
@@ -332,7 +347,9 @@ class MainActivity : Activity() {
                     Toast.makeText(this@MainActivity, "Saved offline; syncing when possible", Toast.LENGTH_SHORT).show()
                     dlg.dismiss()
                     refreshStats()
-                    startSyncService(this@MainActivity)
+                    if (PasscodeStore.hasPasscode(this@MainActivity)) {
+                        startSyncService(this@MainActivity)
+                    }
                 }
             }
         })
@@ -347,6 +364,7 @@ class MainActivity : Activity() {
 
     companion object {
         private const val REQUEST_NOTIFICATIONS = 1001
+
         fun startSyncService(ctx: Context) {
             try {
                 val intent = Intent(ctx, SyncService::class.java)
