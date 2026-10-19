@@ -17,7 +17,7 @@ class PasscodeActivity : Activity() {
     private fun rid(name: String, type: String): Int = resources.getIdentifier(name, type, packageName)
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        // 🔥 FIX: Apply theme before super.onCreate
+        // 🔥 Apply theme before super.onCreate
         applyTheme()
 
         super.onCreate(savedInstanceState)
@@ -49,9 +49,33 @@ class PasscodeActivity : Activity() {
     }
 
     private fun applyTheme() {
-        val mode = getSharedPreferences(Config.PREFS, Context.MODE_PRIVATE).getString(Config.KEY_THEME, Config.THEME_SYSTEM) ?: Config.THEME_SYSTEM
+        val mode = getSharedPreferences(Config.PREFS, Context.MODE_PRIVATE)
+            .getString(Config.KEY_THEME, Config.THEME_SYSTEM) ?: Config.THEME_SYSTEM
         val dark = mode == Config.THEME_DARK || (mode == Config.THEME_SYSTEM && (resources.configuration.uiMode and 0x30) == 0x20)
         val styleId = resources.getIdentifier(if (dark) "AppTheme_Dark" else "AppTheme", "style", packageName)
         if (styleId != 0) setTheme(styleId)
+    }
+}
+
+/**
+ * Lightweight storage for the API passcode.
+ */
+object PasscodeStore {
+    private const val FILE = "daymark_secure"
+    private const val KEY = "api_passcode"
+
+    fun hasPasscode(ctx: Context): Boolean = !get(ctx).isNullOrEmpty()
+
+    fun get(ctx: Context): String? =
+        ctx.getSharedPreferences(FILE, Context.MODE_PRIVATE).getString(KEY, null)
+
+    fun save(ctx: Context, code: String) {
+        ctx.getSharedPreferences(FILE, Context.MODE_PRIVATE)
+            .edit().putString(KEY, code).apply()
+    }
+
+    fun clear(ctx: Context) {
+        ctx.getSharedPreferences(FILE, Context.MODE_PRIVATE)
+            .edit().clear().apply()
     }
 }
