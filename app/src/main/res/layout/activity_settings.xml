@@ -11,7 +11,6 @@
         android:orientation="vertical"
         android:padding="20dp">
 
-        <!-- ═══ Header ═══ -->
         <TextView
             style="@style/TextSectionLabel"
             android:text="MAKE IT YOURS"
@@ -103,7 +102,7 @@
                 android:textSize="13sp" />
         </LinearLayout>
 
-        <!-- ═══ SECURITY ═══ -->
+        <!-- ═══ SECURITY → PASSCODE ═══ -->
         <TextView
             style="@style/TextSectionLabel"
             android:text="SECURITY"
@@ -121,10 +120,10 @@
             android:focusable="true">
 
             <TextView
-                android:id="@+id/passcodeReset"
+                android:id="@+id/passcodeSetup"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="🔐  Reset passcode"
+                android:text="🔑  Set / Change passcode"
                 android:textColor="?attr/daymarkTextPrimary"
                 android:textSize="15sp"
                 android:textStyle="bold"
@@ -135,13 +134,13 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Your passcode is stored on this device only. Resetting will require you to enter it again on next launch."
+                android:text="Required to sync entries to GitHub. The app is open for reading and writing locally."
                 android:textColor="?attr/daymarkTextSecondary"
                 android:textSize="12sp"
                 android:lineSpacingExtra="2dp" />
         </LinearLayout>
 
-        <!-- ═══ Sync endpoint ═══ -->
+        <!-- ═══ Sync status ═══ -->
         <TextView
             android:id="@+id/syncEndpoint"
             android:layout_width="match_parent"
