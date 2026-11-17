@@ -1,9 +1,11 @@
+// language: Kotlin, file: SettingsActivity.kt, target: Android API 26-35
 package com.ximanta.opendiary
 
 import android.app.Activity
 import android.app.AlertDialog
 import android.app.TimePickerDialog
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.widget.CompoundButton
 import android.widget.Switch
@@ -13,23 +15,22 @@ import java.util.Calendar
 
 class SettingsActivity : Activity() {
 
-    private lateinit var prefs: android.content.SharedPreferences
-
-    private fun rid(name: String, type: String): Int =
-        resources.getIdentifier(name, type, packageName)
+    private lateinit var prefs: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        // 🔥 FIX: Must be called BEFORE super.onCreate()
+        // Theme must be applied before super.onCreate so the window picks
+        // up the correct style before the layout inflates.
         applyTheme()
-
         super.onCreate(savedInstanceState)
-        setContentView(rid("activity_settings", "layout"))
+        setContentView(R.layout.activity_settings)
         prefs = getSharedPreferences(Config.PREFS, MODE_PRIVATE)
 
         // ── Reminders ────────────────────────────────────────────────
-        findViewById<Switch>(rid("reminderSwitch", "id"))?.let { switch ->
-            switch.isChecked =
-                prefs.getBoolean(Config.KEY_REMINDER_ENABLED, Config.DEFAULT_REMINDER_ENABLED)
+        findViewById<Switch>(R.id.reminderSwitch)?.let { switch ->
+            switch.isChecked = prefs.getBoolean(
+                Config.KEY_REMINDER_ENABLED,
+                Config.DEFAULT_REMINDER_ENABLED
+            )
             switch.setOnCheckedChangeListener { _: CompoundButton, checked: Boolean ->
                 prefs.edit().putBoolean(Config.KEY_REMINDER_ENABLED, checked).apply()
                 if (checked) {
@@ -40,15 +41,15 @@ class SettingsActivity : Activity() {
             }
         }
 
-        findViewById<TextView>(rid("reminderTime", "id"))
+        findViewById<TextView>(R.id.reminderTime)
             ?.setOnClickListener { chooseTime() }
 
         // ── Theme ────────────────────────────────────────────────────
-        findViewById<TextView>(rid("themeSetting", "id"))
+        findViewById<TextView>(R.id.themeSetting)
             ?.setOnClickListener { chooseTheme() }
 
         // ── Security → Passcode ──────────────────────────────────────
-        findViewById<TextView>(rid("passcodeSetup", "id"))
+        findViewById<TextView>(R.id.passcodeSetup)
             ?.setOnClickListener {
                 startActivity(Intent(this, PasscodeActivity::class.java))
             }
@@ -66,13 +67,14 @@ class SettingsActivity : Activity() {
             .getString(Config.KEY_THEME, Config.THEME_SYSTEM) ?: Config.THEME_SYSTEM
         val dark = mode == Config.THEME_DARK ||
             (mode == Config.THEME_SYSTEM && (resources.configuration.uiMode and 0x30) == 0x20)
-            
-        // 🔥 FIX: Use direct R.style references. No more getIdentifier failing.
         setTheme(if (dark) R.style.AppTheme_Dark else R.style.AppTheme)
     }
 
-    private fun reminderHour() = prefs.getInt(Config.KEY_REMINDER_HOUR, Config.DEFAULT_REMINDER_HOUR)
-    private fun reminderMinute() = prefs.getInt(Config.KEY_REMINDER_MIN, Config.DEFAULT_REMINDER_MIN)
+    private fun reminderHour() =
+        prefs.getInt(Config.KEY_REMINDER_HOUR, Config.DEFAULT_REMINDER_HOUR)
+
+    private fun reminderMinute() =
+        prefs.getInt(Config.KEY_REMINDER_MIN, Config.DEFAULT_REMINDER_MIN)
 
     private fun chooseTime() {
         TimePickerDialog(
@@ -96,14 +98,16 @@ class SettingsActivity : Activity() {
     private fun chooseTheme() {
         val modes = arrayOf("System default", "Light", "Dark")
         val values = arrayOf(Config.THEME_SYSTEM, Config.THEME_LIGHT, Config.THEME_DARK)
-        val selected = values.indexOf(prefs.getString(Config.KEY_THEME, Config.THEME_SYSTEM)).coerceAtLeast(0)
+        val selected = values.indexOf(
+            prefs.getString(Config.KEY_THEME, Config.THEME_SYSTEM)
+        ).coerceAtLeast(0)
 
         AlertDialog.Builder(this)
             .setTitle("Theme")
             .setSingleChoiceItems(modes, selected) { dialog, which ->
                 prefs.edit().putString(Config.KEY_THEME, values[which]).apply()
                 dialog.dismiss()
-                recreate() // Restarts the activity to apply the new theme
+                recreate()
             }
             .setNegativeButton("Cancel", null)
             .show()
@@ -118,7 +122,7 @@ class SettingsActivity : Activity() {
             set(Calendar.SECOND, 0)
             set(Calendar.MILLISECOND, 0)
         }
-        findViewById<TextView>(rid("reminderTime", "id"))?.text =
+        findViewById<TextView>(R.id.reminderTime)?.text =
             DateFormat.getTimeInstance(DateFormat.SHORT).format(calendar.time)
 
         val themeSummary = when (prefs.getString(Config.KEY_THEME, Config.THEME_SYSTEM)) {
@@ -126,7 +130,7 @@ class SettingsActivity : Activity() {
             Config.THEME_DARK -> "Dark"
             else -> "System default"
         }
-        findViewById<TextView>(rid("themeSummary", "id"))?.text = themeSummary
+        findViewById<TextView>(R.id.themeSummary)?.text = themeSummary
 
         val last = prefs.getLong(Config.KEY_LAST_SYNC_AT, 0L)
         val ok = prefs.getBoolean(Config.KEY_LAST_SYNC_OK, true)
@@ -140,7 +144,7 @@ class SettingsActivity : Activity() {
             !ok -> "Last sync had an issue"
             else -> "Last sync: ${humanizeAge(last)} ago • OK"
         }
-        findViewById<TextView>(rid("syncEndpoint", "id"))?.text = syncText
+        findViewById<TextView>(R.id.syncEndpoint)?.text = syncText
     }
 
     private fun humanizeAge(timestampMs: Long): String {
