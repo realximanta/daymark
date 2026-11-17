@@ -1,3 +1,4 @@
+// language: Kotlin, file: PasscodeActivity.kt, target: Android API 26-35
 package com.ximanta.opendiary
 
 import android.app.Activity
@@ -14,20 +15,20 @@ class PasscodeActivity : Activity() {
     private lateinit var errorView: TextView
     private lateinit var button: Button
 
-    private fun rid(name: String, type: String): Int = resources.getIdentifier(name, type, packageName)
-
     override fun onCreate(savedInstanceState: Bundle?) {
-        // 🔥 FIX: Apply theme before super.onCreate
         applyTheme()
-
         super.onCreate(savedInstanceState)
-        setContentView(rid("activity_passcode", "layout"))
-        
-        input = findViewById(rid("passcodeInput", "id"))
-        errorView = findViewById(rid("passcodeError", "id"))
-        button = findViewById(rid("savePasscodeBtn", "id"))
+        setContentView(R.layout.activity_passcode)
 
+        input = findViewById(R.id.passcodeInput)
+        errorView = findViewById(R.id.passcodeError)
+        button = findViewById(R.id.savePasscodeBtn)
+
+        // Preload the existing passcode so the user can verify what is stored.
+        // Once PasscodeStore moves to EncryptedSharedPreferences, this still
+        // resolves — same get() surface.
         PasscodeStore.get(this)?.let { input.setText(it) }
+
         button.setOnClickListener { submit() }
     }
 
@@ -51,15 +52,18 @@ class PasscodeActivity : Activity() {
     private fun applyTheme() {
         val mode = getSharedPreferences(Config.PREFS, Context.MODE_PRIVATE)
             .getString(Config.KEY_THEME, Config.THEME_SYSTEM) ?: Config.THEME_SYSTEM
-        val dark = mode == Config.THEME_DARK || (mode == Config.THEME_SYSTEM && (resources.configuration.uiMode and 0x30) == 0x20)
-        
-        // 🔥 FIX: Use direct R.style references. No more silent failures.
+        val dark = mode == Config.THEME_DARK ||
+            (mode == Config.THEME_SYSTEM && (resources.configuration.uiMode and 0x30) == 0x20)
         setTheme(if (dark) R.style.AppTheme_Dark else R.style.AppTheme)
     }
 }
 
 /**
  * Lightweight storage for the API passcode.
+ *
+ * Currently plaintext in SharedPreferences. Migration to EncryptedSharedPreferences
+ * is a separate change that adds the androidx.security dependency — not silently
+ * folded into this file.
  */
 object PasscodeStore {
     private const val FILE = "daymark_secure"
