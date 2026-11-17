@@ -1,140 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <!-- ═══════════════════════════════════════════════════════════════
-         LIGHT THEME
-         ═══════════════════════════════════════════════════════════════ -->
+    <!-- Light theme — default -->
     <style name="AppTheme" parent="@android:style/Theme.Material.Light.NoActionBar">
-        <item name="android:statusBarColor">@color/background</item>
+        <item name="android:colorPrimary">@color/brand_green</item>
+        <item name="android:colorPrimaryDark">@color/brand_green_dark</item>
+        <item name="android:colorAccent">@color/brand_green</item>
+        <item name="android:windowBackground">@color/bg</item>
+        <item name="android:textColorPrimary">@color/text_primary</item>
+        <item name="android:textColorSecondary">@color/text_secondary</item>
+        <item name="android:statusBarColor">@color/bg</item>
+        <item name="android:navigationBarColor">@color/bg</item>
         <item name="android:windowLightStatusBar">true</item>
-        <item name="android:navigationBarColor">@color/background</item>
-        <item name="android:windowLightNavigationBar">true</item>
-        <item name="android:windowBackground">?attr/daymarkBackground</item>
-        <item name="android:fontFamily">sans</item>
-        <item name="android:colorAccent">@color/primary</item>
-        <item name="android:windowActionModeOverlay">true</item>
-
-        <item name="daymarkBackground">@color/background</item>
-        <item name="daymarkSurface">@color/card</item>
-        <item name="daymarkStroke">@color/card_stroke</item>
-        <item name="daymarkDivider">@color/divider</item>
-        <item name="daymarkTextPrimary">@color/text_primary</item>
-        <item name="daymarkTextSecondary">@color/text_secondary</item>
-        <item name="daymarkAccent">@color/primary</item>
-        <item name="daymarkRipple">@color/ripple</item>
-        <item name="daymarkScrim">@color/scrim</item>
-        <item name="daymarkElevation">3dp</item>
-        <item name="daymarkCornerRadius">22dp</item>
     </style>
 
-    <!-- ═══════════════════════════════════════════════════════════════
-         DARK THEME
-         ═══════════════════════════════════════════════════════════════ -->
-    <style name="AppTheme.Dark" parent="@android:style/Theme.Material.NoActionBar">
-        <item name="android:statusBarColor">@color/background_dark</item>
+    <!-- Dark theme — referenced by name from every Activity's applyTheme() -->
+    <style name="AppTheme_Dark" parent="@android:style/Theme.Material.NoActionBar">
+        <item name="android:colorPrimary">@color/brand_green</item>
+        <item name="android:colorPrimaryDark">@color/brand_green_dark</item>
+        <item name="android:colorAccent">@color/brand_green</item>
+        <item name="android:windowBackground">@color/bg</item>
+        <item name="android:textColorPrimary">@color/text_primary</item>
+        <item name="android:textColorSecondary">@color/text_secondary</item>
+        <item name="android:statusBarColor">@color/bg</item>
+        <item name="android:navigationBarColor">@color/bg</item>
         <item name="android:windowLightStatusBar">false</item>
-        <item name="android:navigationBarColor">@color/background_dark</item>
-        <item name="android:windowLightNavigationBar">false</item>
-        <item name="android:windowBackground">?attr/daymarkBackground</item>
-        <item name="android:fontFamily">sans</item>
-        <item name="android:colorAccent">@color/accent_dark</item>
-        <item name="android:windowActionModeOverlay">true</item>
-
-        <item name="daymarkBackground">@color/background_dark</item>
-        <item name="daymarkSurface">@color/surface_dark</item>
-        <item name="daymarkStroke">@color/stroke_dark</item>
-        <item name="daymarkDivider">#2A3A32</item>
-        <item name="daymarkTextPrimary">@color/text_primary_dark</item>
-        <item name="daymarkTextSecondary">@color/text_secondary_dark</item>
-        <item name="daymarkAccent">@color/accent_dark</item>
-        <item name="daymarkRipple">#33B5DFA6</item>
-        <item name="daymarkScrim">@color/scrim</item>
-        <item name="daymarkElevation">3dp</item>
-        <item name="daymarkCornerRadius">22dp</item>
     </style>
-
-    <!-- ═══════════════════════════════════════════════════════════════
-         TYPOGRAPHY
-         ═══════════════════════════════════════════════════════════════ -->
-    <style name="TextHeadline">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:textSize">30sp</item>
-        <item name="android:fontFamily">serif</item>
-        <item name="android:textStyle">bold</item>
-        <item name="android:textColor">?attr/daymarkTextPrimary</item>
-        <item name="android:letterSpacing">-0.01</item>
-    </style>
-
-    <style name="TextSectionLabel">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:textSize">10sp</item>
-        <item name="android:letterSpacing">0.13</item>
-        <item name="android:textStyle">bold</item>
-        <item name="android:textAllCaps">true</item>
-        <item name="android:textColor">?attr/daymarkAccent</item>
-    </style>
-
-    <style name="TextBody">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:textSize">13sp</item>
-        <item name="android:textColor">?attr/daymarkTextSecondary</item>
-        <item name="android:lineSpacingExtra">2dp</item>
-    </style>
-
-    <style name="TextCaption">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:textSize">11sp</item>
-        <item name="android:textColor">?attr/daymarkTextSecondary</item>
-    </style>
-
-    <!-- ═══════════════════════════════════════════════════════════════
-         WIDGET ANCHOR  ← parent="" is mandatory
-         ═══════════════════════════════════════════════════════════════ -->
-    <style name="Widget.Daymark" parent="" />
-
-    <style name="Widget.Daymark.Input">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">54dp</item>
-        <item name="android:background">@drawable/bg_input</item>
-        <item name="android:paddingStart">17dp</item>
-        <item name="android:paddingEnd">17dp</item>
-        <item name="android:textSize">14sp</item>
-        <item name="android:textColor">?attr/daymarkTextPrimary</item>
-        <item name="android:textColorHint">?attr/daymarkTextSecondary</item>
-    </style>
-
-    <style name="Widget.Daymark.Switch" parent="@android:style/Widget.Material.CompoundButton.Switch">
-        <item name="android:textColor">?attr/daymarkTextPrimary</item>
-        <item name="android:textSize">15sp</item>
-    </style>
-
-    <!-- ═══════════════════════════════════════════════════════════════
-         DRAWER
-         ═══════════════════════════════════════════════════════════════ -->
-    <style name="DrawerItem">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:orientation">horizontal</item>
-        <item name="android:gravity">center_vertical</item>
-        <item name="android:clickable">true</item>
-        <item name="android:focusable">true</item>
-        <item name="android:paddingStart">22dp</item>
-        <item name="android:paddingTop">16dp</item>
-        <item name="android:paddingBottom">16dp</item>
-        <item name="android:background">?android:attr/selectableItemBackground</item>
-    </style>
-
-    <style name="DrawerFooter">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:textColor">?attr/daymarkTextSecondary</item>
-        <item name="android:textSize">11sp</item>
-        <item name="android:padding">22dp</item>
-        <item name="android:gravity">start</item>
-    </style>
-
 </resources>
