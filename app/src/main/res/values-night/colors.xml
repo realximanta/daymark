@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- base surfaces -->
+    <color name="bg">#111A17</color>
+    <color name="surface">#1B2822</color>
+    <color name="card_stroke">#2F4137</color>
+
+    <!-- type -->
+    <color name="text_primary">#F0F4ED</color>
+    <color name="text_secondary">#A2B1A7</color>
+
+    <!-- brand / hero -->
+    <color name="brand_green">#2F4137</color>
+    <color name="brand_green_dark">#111A17</color>
+    <color name="hero_bg">#17473C</color>
+    <color name="hero_text">#F0F4ED</color>
+
+    <!-- badge palette — dark mode -->
+    <color name="badge_default">#22352C</color>
+    <color name="badge_doing">#3B2B22</color>
+    <color name="badge_food">#3B3520</color>
+    <color name="badge_idea">#3B3820</color>
+    <color name="badge_task">#22303B</color>
+    <color name="badge_regret">#3B222A</color>
+    <color name="badge_success">#1F3532</color>
+    <color name="badge_travel">#2A233B</color>
+    <color name="badge_plan">#33232B</color>
+    <color name="badge_watched">#223528</color>
+</resources>
