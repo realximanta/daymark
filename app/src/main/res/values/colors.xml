@@ -1,53 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- ═══ Brand palette ═══ -->
-    <color name="primary">#24584B</color>
-    <color name="primary_dark">#183E35</color>
-    <color name="primary_light">#DCEBE3</color>
-    <color name="accent">#C9E6A0</color>
-
-    <!-- ═══ Light theme surfaces ═══ -->
-    <color name="background">#F7F6F1</color>
-    <color name="background_grad_end">#EBF1E8</color>
-    <color name="card">#FFFEFB</color>
+    <!-- base surfaces -->
+    <color name="bg">#F7F6F1</color>
+    <color name="surface">#FFFEFB</color>
     <color name="card_stroke">#E6E8E0</color>
 
-    <!-- ═══ Light theme text ═══ -->
+    <!-- type -->
     <color name="text_primary">#1D2924</color>
     <color name="text_secondary">#5E6D65</color>
 
-    <!-- ═══ Dark theme tokens (used by styles.xml + dynamic code) ═══ -->
-    <color name="background_dark">#111A17</color>
-    <color name="surface_dark">#1B2822</color>
-    <color name="stroke_dark">#2F4137</color>
-    <color name="text_primary_dark">#F0F4ED</color>
-    <color name="text_secondary_dark">#A2B1A7</color>
-    <color name="accent_dark">#B5DFA6</color>
+    <!-- brand / hero -->
+    <color name="brand_green">#24584B</color>
+    <color name="brand_green_dark">#183E35</color>
+    <color name="hero_bg">#183E35</color>
+    <color name="hero_text">#F0F4ED</color>
 
-    <!-- ═══ Interaction ═══ -->
-    <color name="ripple">#2024584B</color>
-    <color name="scrim">#A6000000</color>
-
-    <!-- ═══ Drawer header gradient ═══ -->
-    <color name="drawer_header_start">#17473C</color>
-    <color name="drawer_header_end">#102E29</color>
-
-    <!-- ═══ Hero panel gradient ═══ -->
-    <color name="hero_start">#194B3D</color>
-    <color name="hero_center">#205A4B</color>
-    <color name="hero_end">#112F2A</color>
-
-    <!-- ═══ Divider used in lists/rows ═══ -->
-    <color name="divider">#1A1D2924</color>
-
-    <!-- ═══ Category badge tints (light mode) ═══ -->
-    <color name="badge_doing">#E4F0E4</color>
-    <color name="badge_food">#FFE9D9</color>
-    <color name="badge_idea">#FFEDC6</color>
+    <!-- badge palette — light mode -->
+    <color name="badge_default">#EBF1E8</color>
+    <color name="badge_doing">#FFE9D9</color>
+    <color name="badge_food">#FFEDC6</color>
+    <color name="badge_idea">#FFF4C2</color>
     <color name="badge_task">#E4ECFF</color>
     <color name="badge_regret">#F5E4E8</color>
-    <color name="badge_success">#FFEAC9</color>
-    <color name="badge_travel">#DCF1F0</color>
-    <color name="badge_plan">#E9E5FB</color>
-    <color name="badge_watched">#F0E7ED</color>
+    <color name="badge_success">#DCF1F0</color>
+    <color name="badge_travel">#E9E5FB</color>
+    <color name="badge_plan">#F0E7ED</color>
+    <color name="badge_watched">#E4F0E4</color>
 </resources>
