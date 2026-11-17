@@ -1,4 +1,4 @@
-name: Build & Release Daymark APK
+name: Build & Release
 
 on:
   push:
@@ -12,55 +12,45 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Restore persistent keystore
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Restore debug keystore
         run: |
           mkdir -p ~/.android
           echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > ~/.android/debug.keystore
           chmod 600 ~/.android/debug.keystore
 
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: '17'
-
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
+      - uses: android-actions/setup-android@v3
         with:
           packages: 'platform-tools platforms;android-34 build-tools;34.0.0'
-          accept-android-sdk-licenses: true
+          accept-android-sdk-licenses: false
+
+      - name: Accept Android SDK licenses
+        run: |
+          yes | sdkmanager --licenses > /dev/null 2>&1 || true
+          sdkmanager "platform-tools" "platforms;android-34" "build-tools;34.0.0"
+
+      - name: Grant execute permission to gradlew
+        run: chmod +x ./gradlew
 
       - name: Build debug APK
-        run: gradle assembleDebug --no-daemon --stacktrace
+        run: ./gradlew :app:assembleDebug --no-daemon
 
-      - name: Prepare APK
-        run: |
-          mkdir -p out
-          cp app/build/outputs/apk/debug/app-debug.apk out/Daymark-${{ github.ref_name }}.apk
-          ls -lh out/
-
-      - name: Upload APK as workflow artifact
+      - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Daymark-APK
-          path: out/*.apk
-          retention-days: 90
+          name: daymark-debug-apk
+          path: app/build/outputs/apk/debug/*.apk
 
-      - name: Create GitHub Release
+      - name: Publish release
         if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v2
         with:
-          name: Daymark ${{ github.ref_name }}
-          body: |
-            📔 Daymark ${{ github.ref_name }}
-            Download the APK below and install it on your Android device.
-          files: out/*.apk
-          draft: false
-          prerelease: false
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          files: app/build/outputs/apk/debug/*.apk
+          generate_release_notes: true
