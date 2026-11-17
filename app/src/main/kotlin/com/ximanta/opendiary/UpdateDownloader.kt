@@ -16,7 +16,8 @@ import java.net.URL
 object UpdateDownloader {
     private const val APK_NAME = "update.apk"
     private const val MAX_APK_BYTES = 100L * 1024L * 1024L
-    const val AUTHORITY = "com.ximanta.opendiary.fileprovider"
+
+    private fun authorityFor(ctx: Context): String = "${ctx.packageName}.fileprovider"
 
     fun downloadAndInstall(ctx: Context, apkUrl: String, onProgress: (String, Boolean) -> Unit) {
         Thread {
@@ -37,16 +38,16 @@ object UpdateDownloader {
                     readTimeout = 30_000
                     instanceFollowRedirects = true
                 }
-                if (conn!!.responseCode !in 200..299) {
-                    fail(ctx, onProgress, "Download failed: HTTP ${conn!!.responseCode}")
+                if (conn.responseCode !in 200..299) {
+                    fail(ctx, onProgress, "Download failed: HTTP ${conn.responseCode}")
                     return@Thread
                 }
-                val announced = conn!!.contentLengthLong
+                val announced = conn.contentLengthLong
                 if (announced > MAX_APK_BYTES) {
                     fail(ctx, onProgress, "Update is too large")
                     return@Thread
                 }
-                conn!!.inputStream.use { input ->
+                conn.inputStream.use { input ->
                     FileOutputStream(tempFile).use { output ->
                         val buffer = ByteArray(16 * 1024)
                         var written = 0L
@@ -105,8 +106,9 @@ object UpdateDownloader {
                 ctx.startActivity(settingsIntent)
                 return
             }
-            val uri = Uri.parse("content://$AUTHORITY/${apk.name}")
-            val intent = Intent(Intent.ACTION_VIEW).setDataAndType(uri, "application/vnd.android.package-archive")
+            val uri = Uri.parse("content://${authorityFor(ctx)}/${apk.name}")
+            val intent = Intent(Intent.ACTION_VIEW)
+                .setDataAndType(uri, "application/vnd.android.package-archive")
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_GRANT_READ_URI_PERMISSION)
             ctx.startActivity(intent)
             callback("Installer opened", true)
