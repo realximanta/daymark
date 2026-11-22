@@ -1,218 +1,168 @@
-# 📔 Daymark — Open-Source Journaling App for Android
-
 <div align="center">
-  <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=1200&q=80" alt="Daymark Journaling App" width="100%" />
-  
-  [![Kotlin](https://img.shields.io/badge/Kotlin-1.9%2B-7F52FF?logo=kotlin&logoColor=white)](https://kotlinlang.org)
-  [![Android](https://img.shields.io/badge/Android-26%2B-3DDC84?logo=android&logoColor=white)](https://www.android.com)
-  [![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
-  [![GitHub](https://img.shields.io/badge/GitHub-realximanta%2Fdaymark-181717?logo=github&logoColor=white)](https://github.com/realximanta/daymark)
+
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0:101827,100:426B60&height=200&section=header&text=DAYMARK&fontSize=64&fontColor=FFFFFF&fontAlignY=38&desc=Make%20every%20day%20count.&descAlignY=65&descSize=17" width="100%" alt="Daymark" />
+
+[![Release](https://img.shields.io/github/v/release/realximanta/daymark?style=flat-square&color=426B60)](https://github.com/realximanta/daymark/releases)
+[![Android](https://img.shields.io/badge/Android-8.0%2B-3DDC84?style=flat-square&logo=android&logoColor=white)](https://developer.android.com)
+[![Kotlin](https://img.shields.io/badge/Kotlin-2.0.20-7F52FF?style=flat-square&logo=kotlin&logoColor=white)](https://kotlinlang.org)
+[![Build](https://img.shields.io/github/actions/workflow/status/realximanta/daymark/build.yml?style=flat-square&logo=githubactions)](https://github.com/realximanta/daymark/actions)
+
+[![Stars](https://img.shields.io/github/stars/realximanta/daymark?style=flat-square)](https://github.com/realximanta/daymark/stargazers)
+[![Downloads](https://img.shields.io/github/downloads/realximanta/daymark/total?style=flat-square&color=426B60)](https://github.com/realximanta/daymark/releases)
+[![Issues](https://img.shields.io/github/issues/realximanta/daymark?style=flat-square)](https://github.com/realximanta/daymark/issues)
+[![Last commit](https://img.shields.io/github/last-commit/realximanta/daymark?style=flat-square)](https://github.com/realximanta/daymark/commits/main)
+
+**A little space for everything that makes up your day.**
+
+Capture thoughts, organize tasks and archive your memories in Markdown.
+
+[![APK](https://img.shields.io/badge/DOWNLOAD-ANDROID_APK-426B60?style=for-the-badge&logo=android&logoColor=white)](https://github.com/realximanta/daymark/releases/latest)
+[![Backend](https://img.shields.io/badge/VIEW-BACKEND-24292F?style=for-the-badge&logo=github)](https://github.com/realximanta/daymark-app)
+
+[Features](#-features) · [Architecture](#-architecture) · [Setup](#-getting-started) · [Privacy](#-privacy--data)
+
 </div>
 
----
+## ✨ Features
 
-## 🎯 Overview
+| | |
+| :--- | :--- |
+| 📝 **Journaling** — Nine focused categories | 📶 **Offline-first** — Local SQLite storage |
+| 🔄 **GitHub sync** — Markdown archives | ✨ **AI formatting** — Groq-assisted formatting |
+| ✅ **Tasks & plans** — Completion tracking | 🌓 **Themes** — Light, dark and system |
+| 🔔 **Reminders** — Daily notifications | 📦 **Updates** — GitHub release integration |
+| 🕒 **History** — Revisit local entries | 🔑 **Authentication** — Passcode-protected sync |
 
-**Daymark** is a lightweight, privacy-first journaling application for Android that enables you to capture daily thoughts across 9 intuitive categories. Each entry is stored locally, synced securely to your GitHub repository via a dedicated backend service, and formatted with AI-assisted markdown.
+## 🗂 Your day, organized
 
-Perfect for:
-- 📅 Daily reflection & journaling
-- 📊 Tracking habits & mood
-- 🎯 Recording goals & achievements
-- 🍽️ Logging meals & health
-- 🌍 Documenting travels
-- 💡 Capturing ideas on the go
+| Category | Capture |
+| --- | --- |
+| 🏃 Currently Doing | Activities and work |
+| 🍽️ What I Ate | Meals and food notes |
+| 💡 New Idea | Inspiration |
+| ✅ Schedule/Tasks | Daily priorities |
+| 🌧️ Regret | Lessons and reflections |
+| 🏆 Success of the Day | Wins and achievements |
+| 🚗 Travelled To | Places and experiences |
+| 📅 Plan for Tomorrow | Tomorrow's intentions |
+| 🎬 Watched | Films, shows and videos |
 
----
+## ⚙ Architecture
 
-## ✨ Key Features
-
-| Feature | Details |
-|---------|---------|
-| **🔐 Secure Sync** | App opens freely, but syncing requires a secret passcode set in Preferences |
-| **🌙 Dynamic Theming** | Beautiful Light & Dark modes (System, Light, or Dark) with smooth transitions |
-| **📱 Modern UI** | Custom drawer navigation, hero panels, and rounded category cards |
-| **🔒 Private & Secure** | Entries stored locally first, synced via GitHub App |
-| **🤖 AI Formatting** | Groq-powered markdown structuring (never alters facts) |
-| **⏰ Smart Reminders** | Configurable daily reminder notifications |
-| **🔄 Background Sync** | Foreground service ensures reliable syncing |
-| **📦 Offline-First** | Works without internet; queues entries for sync |
-
----
-
-## 📚 Supported Categories
-
-The app provides 9 pre-configured journaling categories:
-
-1. **Currently Doing** — What you're working on right now
-2. **What I Ate** — Meal tracking & nutrition notes
-3. **New Idea** — Ideas, inspiration, creative thoughts
-4. **Schedule/Tasks** — Daily tasks & to-do lists
-5. **Regret** — Reflections on mistakes & learnings
-6. **Success of the Day** — Wins, achievements, celebrations
-7. **Travelled To** — Travel logs & location notes
-8. **Plan for Tomorrow** — Tomorrow's agenda & intentions
-9. **Watched** — Movies, shows, educational content
-
----
-
-## 🏗️ Architecture
-
-### Android App (`daymark`)
-```text
-app/src/main/kotlin/com/ximanta/opendiary/
-├── MainActivity.kt           # Dashboard UI + drawer + category grid
-├── PasscodeActivity.kt       # Secure passcode entry & storage
-├── SettingsActivity.kt       # Theme, reminders, passcode setup
-├── TasksActivity.kt          # Multi-task editor for tasks/plans
-├── SyncService.kt            # Foreground sync to backend
-├── EntryDbHelper.kt          # SQLite local storage
-├── Config.kt                 # Configuration constants
-├── AlarmScheduler.kt         # Reminder scheduling
-└── DaymarkPolish.kt          # UI animations & dynamic styling
+```mermaid
+flowchart LR
+    A[Android app] --> B[(SQLite)]
+    B -->|HTTPS + passcode| C[Express backend]
+    C <-->|Formatting| D[Groq AI]
+    C -->|GitHub App API| E[(Journal repository)]
+    classDef local fill:#426B60,color:#fff,stroke:#426B60;
+    class A,B local;
 ```
 
-### Backend Service (`daymark-app`)
-```text
-daymark-app/
-├── server.js                 # Express.js REST API
-├── render.yaml               # Render.com deployment config
-├── package.json              # Dependencies
-└── README.md                 # Backend documentation
-```
+Entries are stored locally first and uploaded as Markdown when sync succeeds.
 
-**Data Flow:**
-```text
-Android App (Local DB) → HTTP POST (Bearer Token) → Backend Service → GitHub App Auth → GitHub Repo
-```
-
----
-
-## 🚀 Getting Started
-
-### Part 1: Set Up the Backend (`daymark-app`)
-
-#### Prerequisites
-- Node.js 20+
-- GitHub account
-- GitHub App credentials
-- Groq API key (free at [groq.com](https://groq.com))
-- Render.com account (or any Node.js hosting)
-
-#### Backend Setup Steps
-
-1. **Create a GitHub App:** 
-   - Go to [GitHub Developer Settings](https://github.com/settings/apps)
-   - Grant **Contents: Read & write** on your private journal repo.
-   - Note the **App ID**, **Installation ID**, and generate a **Private Key**.
-
-2. **Deploy to Render:**
-   - Connect your `daymark-app` repo to Render.
-   - Add the following **Environment Variables**:
-     ```
-     DAYMARK_PASSCODE = <your-strong-secret-passcode>
-     GH_APP_ID = <your-app-id>
-     GH_PRIVATE_KEY = <your-private-key-with-newlines>
-     GH_INSTALL_ID = <your-installation-id>
-     GH_REPO_OWNER = <your-github-username>
-     GH_REPO_NAME = <repo-name-for-journal-entries>
-     GROQ_API_KEY = <your-groq-api-key>
-     MODEL_NAME = openai/gpt-oss-20b
-     ```
-
-3. **Verify backend:**
-   ```bash
-   curl https://your-backend-url.onrender.com/health
-   # Expected: {"status":"alive","time":...}
-   ```
-
----
-
-### Part 2: Build & Install the Android App (`daymark`)
-
-#### Prerequisites
-- Android Studio or Termux (with Android SDK tools)
-- JDK 17+
-
-#### Building via Android Studio (Recommended)
-1. Clone the repo and open it in Android Studio.
-2. Update `Config.kt`:
-   ```kotlin
-   const val BACKEND_URL = "https://your-backend-url.onrender.com"
-   ```
-3. Click **Build > Build Bundle(s) / APK(s) > Build APK(s)**.
-
-#### Building via Termux (Gradle-free)
-1. Follow the standard setup for Termux (`pkg install kotlin android-tools openjdk-17`).
-2. Run the custom build script:
-   ```bash
-   chmod +x build.sh
-   ./build.sh
-   ```
-
-> **⚠️ Package Conflict Warning:** If you switch between local builds (Termux/Android Studio) and CI builds (GitHub Actions), Android will reject the update because the APKs are signed with different debug keys. You must uninstall the previous app before installing the new one, or ensure your CI pipeline uses your local `debug.keystore`.
-
----
-
-## 🔐 Configuration & Passcode
-
-The app uses a two-tier access model:
-1. **Open UI:** Anyone can open the app and type entries locally.
-2. **Secured Sync:** To push entries to GitHub, the passcode must be set.
-
-To set the passcode:
-1. Open the app → Tap the hamburger menu (☰) → **Preferences**.
-2. Scroll to the **Security** section → Tap **Set / Change passcode**.
-3. Enter the exact string you configured in the `DAYMARK_PASSCODE` environment variable on Render.
-
-Entries will now sync silently in the background using the `Authorization: Bearer <passcode>` header.
-
----
-
-## 📱 User Guide
-
-### First Launch
-1. Grant **POST_NOTIFICATIONS** permission.
-2. Set your passcode in Preferences (required for sync).
-3. Select a category from the grid.
-4. Type your entry and tap **Save**.
-
-### Viewing Entries
-- Entries sync every 15 minutes.
-- Check your GitHub repo for synced entries:
-  - `2026-10-19/currently-doing.md`
-  - `2026-10-19/meals.md`
-
----
-
-## 🛠️ Troubleshooting
-
-| Issue | Solution |
-|-------|----------|
-| **"App not installed as package conflicts"** | You are trying to install an APK signed with a different key. Uninstall the old app first. |
-| **Sync fails with 401 Unauthorized** | The passcode in Preferences does not match `DAYMARK_PASSCODE` on Render. |
-| **Theme doesn't change** | Restart the app. The theme is applied in `onCreate()`. |
-| **Entries not syncing** | Check your internet connection and verify the backend URL in `Config.kt`. |
-
----
-
-## 🌟 Tech Stack
-
-| Layer | Technology | Version |
-|-------|-----------|---------|
-| **Frontend** | Kotlin | 1.9+ |
-| **Platform** | Android | 26+ (API level) |
-| **Database** | SQLite | Built-in |
-| **Backend** | Node.js + Express | 20+, 4.19 |
-| **GitHub API** | Octokit | 21.0 |
-| **AI** | Groq (OpenAI-compat) | gpt-oss-20b |
-
----
+## 🛠 Tech stack
 
 <div align="center">
-  <p>
-    <strong>Daymark</strong> — Open-source journaling, one entry at a time.<br>
-    <a href="https://github.com/realximanta/daymark">⭐ Star on GitHub</a>
-  </p>
-  <p>Made with ❤️ by <a href="https://github.com/realximanta">@realximanta</a></p>
+
+![Kotlin](https://img.shields.io/badge/Kotlin-7F52FF?style=for-the-badge&logo=kotlin&logoColor=white)
+![Android](https://img.shields.io/badge/Android-3DDC84?style=for-the-badge&logo=android&logoColor=white)
+![SQLite](https://img.shields.io/badge/SQLite-003B57?style=for-the-badge&logo=sqlite&logoColor=white)
+![Gradle](https://img.shields.io/badge/Gradle-02303A?style=for-the-badge&logo=gradle&logoColor=white)
+![Node](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
+![Express](https://img.shields.io/badge/Express-000000?style=for-the-badge&logo=express)
+![Actions](https://img.shields.io/badge/GitHub_Actions-2088FF?style=for-the-badge&logo=githubactions&logoColor=white)
+
+</div>
+
+## 🚀 Getting started
+
+Download the APK from [Releases](https://github.com/realximanta/daymark/releases). Install on Android 8.0 or newer and start journaling locally. For your own private archive, configure your own backend and rebuild the app.
+
+<details>
+<summary><b>☁️ Deploy your backend</b></summary>
+
+1. Create a private journal repository and a GitHub App with Contents read/write access to that repository.
+2. Deploy [daymark-app](https://github.com/realximanta/daymark-app) on Render or another Node.js 20+ host.
+3. Configure environment variables:
+
+| Variable | Purpose |
+| --- | --- |
+| `DAYMARK_PASSCODE` | Strong API secret |
+| `GH_APP_ID` | GitHub App ID |
+| `GH_PRIVATE_KEY` | App private key |
+| `GH_INSTALL_ID` | Installation ID |
+| `GH_REPO_OWNER` | Journal repository owner |
+| `GH_REPO_NAME` | Journal repository name |
+| `GROQ_API_KEY` | AI API secret |
+| `MODEL_NAME` | Model, e.g. `openai/gpt-oss-20b` |
+
+Verify with `curl https://your-backend-url.onrender.com/health`. Update `BACKEND_URL` in [Config.kt](app/src/main/kotlin/com/ximanta/opendiary/Config.kt), rebuild, and enter the matching passcode in Preferences → Security. Never commit credentials.
+
+</details>
+
+<details>
+<summary><b>💻 Build from source</b></summary>
+
+Requires JDK 17, Android SDK 34 and Gradle 8.7 or Android Studio.
+
+```bash
+git clone https://github.com/realximanta/daymark.git
+cd daymark
+# If the wrapper is absent:
+gradle wrapper --gradle-version 8.7
+chmod +x gradlew
+./gradlew :app:assembleDebug
+```
+
+Output: `app/build/outputs/apk/debug/`. A Gradle-free Termux build is also documented via `build.sh`.
+
+APK updates require matching signing keys. Uninstalling can erase local entries; preserve your data first.
+
+</details>
+
+<details>
+<summary><b>📂 Explore the source</b></summary>
+
+| File | Purpose |
+| --- | --- |
+| [MainActivity](app/src/main/kotlin/com/ximanta/opendiary/MainActivity.kt) | Dashboard and capture |
+| [EntryDbHelper](app/src/main/kotlin/com/ximanta/opendiary/EntryDbHelper.kt) | Local persistence |
+| [SyncService](app/src/main/kotlin/com/ximanta/opendiary/SyncService.kt) | Upload and retries |
+| [PasscodeActivity](app/src/main/kotlin/com/ximanta/opendiary/PasscodeActivity.kt) | Credential setup |
+| [Build workflow](.github/workflows/build.yml) | CI and releases |
+
+</details>
+
+## 🔐 Privacy & data
+
+Daymark is local-first, not end-to-end encrypted. Entries are stored in SQLite and sync credentials in app-private SharedPreferences. The passcode protects uploads, not access to the diary. During sync, journal text is sent over HTTPS to the configured backend and may be processed by Groq before storage on GitHub. Use a private journal repository and a backend you trust. Sync is not a verified two-way backup or restore system.
+
+<details>
+<summary><b>❓ Troubleshooting</b></summary>
+
+| Problem | Try this |
+| --- | --- |
+| HTTP 401 | Check the backend passcode |
+| Pending entries | Check network and backend availability |
+| APK conflict | Check signing keys before uninstalling |
+| Theme not refreshed | Reopen the app |
+
+</details>
+
+## 🤝 Contributing
+
+Report bugs or suggest features via [Issues](https://github.com/realximanta/daymark/issues/new). Submit changes via [Pull requests](https://github.com/realximanta/daymark/pulls). Never include private journal content or credentials. This repository is publicly viewable; an explicit software license has not yet been added.
+
+---
+<div align="center">
+
+**Your day. Your story. Your Daymark.**
+
+Built by [@realximanta](https://github.com/realximanta)
+
+[![Star](https://img.shields.io/badge/STAR-DAYMARK-426B60?style=for-the-badge&logo=github)](https://github.com/realximanta/daymark)
+
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0:101827,100:426B60&height=100&section=footer" width="100%" alt="" />
+
 </div>
