@@ -1,41 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="152dp"
     android:orientation="vertical"
-    android:background="@drawable/card_bg"
-    android:elevation="1dp"
+    android:gravity="top|start"
     android:padding="16dp"
-    android:layout_margin="6dp"
-    android:minHeight="136dp">
+    android:background="@drawable/bg_category_card">
 
+    <!-- 🎨 Icon badge (DaymarkPolish tints this per-category) -->
     <TextView
         android:id="@+id/itemIcon"
-        android:layout_width="44dp"
-        android:layout_height="44dp"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         android:gravity="center"
-        android:textSize="22sp"
-        android:background="@drawable/badge_bg"
-        android:includeFontPadding="false"/>
+        android:background="@drawable/bg_icon_badge"
+        android:textSize="24sp"
+        android:contentDescription="@null" />
 
+    <!-- 🏷️ Category label -->
     <TextView
         android:id="@+id/itemLabel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="14dp"
-        android:textColor="@color/text_primary"
-        android:textSize="15sp"
+        android:textColor="?attr/daymarkTextPrimary"
         android:textStyle="bold"
+        android:textSize="14sp"
         android:maxLines="2"
-        android:ellipsize="end"/>
+        android:ellipsize="end"
+        android:lineSpacingExtra="1dp"
+        android:layout_marginTop="10dp" />
 
+    <!-- 📝 Description (DaymarkPolish overwrites this at bind time) -->
     <TextView
         android:id="@+id/itemDescription"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="3dp"
-        android:textColor="@color/text_secondary"
-        android:textSize="12sp"
+        android:text="Write a little today"
+        android:textColor="?attr/daymarkTextSecondary"
+        android:textSize="11sp"
         android:maxLines="1"
-        android:ellipsize="end"/>
+        android:ellipsize="end"
+        android:layout_marginTop="3dp" />
 </LinearLayout>
