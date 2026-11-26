@@ -1,104 +1,83 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!-- Network -->
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-
-    <!-- Notifications (runtime prompt on API 33+ handled in MainActivity) -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
-
-    <!-- Sync foreground service -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC"/>
-
-    <!-- Reminder rescheduling across reboot / clock changes -->
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
-
-    <!-- Exact alarms — USE_EXACT_ALARM is auto-granted on 33+,
-         SCHEDULE_EXACT_ALARM covers 31–32 with a permission prompt. -->
-    <uses-permission android:name="android.permission.USE_EXACT_ALARM"/>
-    <uses-permission
-        android:name="android.permission.SCHEDULE_EXACT_ALARM"
-        android:maxSdkVersion="32"/>
-
-    <!-- In-app APK update -->
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES"/>
 
     <application
-        android:allowBackup="false"
-        android:icon="@mipmap/ic_launcher"
-        android:label="Daymark"
-        android:roundIcon="@mipmap/ic_launcher_round"
-        android:supportsRtl="true"
+        android:label="@string/app_name"
+        android:icon="@drawable/ic_launcher"
         android:theme="@style/AppTheme"
-        android:usesCleartextTraffic="false"
-        tools:targetApi="34">
+        android:allowBackup="false"
+        android:supportsRtl="true"
+        android:usesCleartextTraffic="false">
 
-        <!-- Launcher -->
+        <!-- 🚪 APP OPENS DIRECTLY HERE — no passcode gate -->
         <activity
-            android:name=".MainActivity"
+            android:name="com.ximanta.opendiary.MainActivity"
             android:exported="true"
-            android:launchMode="singleTop"
-            android:windowSoftInputMode="adjustResize">
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
 
+        <!-- 🔑 Reached from Preferences → Passcode -->
         <activity
-            android:name=".SettingsActivity"
+            android:name="com.ximanta.opendiary.PasscodeActivity"
             android:exported="false"
-            android:windowSoftInputMode="adjustResize"/>
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme"/>
 
         <activity
-            android:name=".HistoryActivity"
+            android:name="com.ximanta.opendiary.HistoryActivity"
             android:exported="false"
-            android:windowSoftInputMode="adjustResize"/>
+            android:label="@string/history"
+            android:theme="@style/AppTheme"/>
 
         <activity
-            android:name=".TasksActivity"
+            android:name="com.ximanta.opendiary.TasksActivity"
             android:exported="false"
-            android:windowSoftInputMode="adjustResize"/>
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme"/>
 
         <activity
-            android:name=".PasscodeActivity"
+            android:name="com.ximanta.opendiary.SettingsActivity"
             android:exported="false"
-            android:windowSoftInputMode="adjustResize"/>
+            android:label="@string/settings"
+            android:theme="@style/AppTheme"/>
 
-        <!-- Sync foreground service -->
         <service
-            android:name=".SyncService"
+            android:name="com.ximanta.opendiary.SyncService"
             android:exported="false"
             android:foregroundServiceType="dataSync"/>
 
-        <!-- Fires the daily reminder notification. Only our own PendingIntent
-             targets it, so exported="false" is correct. -->
         <receiver
-            android:name=".ReminderReceiver"
+            android:name="com.ximanta.opendiary.ReminderReceiver"
             android:exported="false"/>
 
-        <!-- Reschedules alarms after reboot, update, and clock/timezone change.
-             System broadcasts require exported="true". -->
         <receiver
-            android:name=".BootReceiver"
+            android:name="com.ximanta.opendiary.BootReceiver"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
                 <action android:name="android.intent.action.MY_PACKAGE_REPLACED"/>
-                <action android:name="android.intent.action.TIME_SET"/>
-                <action android:name="android.intent.action.TIMEZONE_CHANGED"/>
             </intent-filter>
         </receiver>
 
-        <!-- Serves cached APKs to the package installer during self-update.
-             Exported=false; read access flows through FLAG_GRANT_READ_URI_PERMISSION. -->
         <provider
-            android:name=".ApkFileProvider"
-            android:authorities="${applicationId}.fileprovider"
+            android:name="com.ximanta.opendiary.ApkFileProvider"
+            android:authorities="com.ximanta.opendiary.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true"/>
+
     </application>
 </manifest>

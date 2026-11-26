@@ -18,28 +18,38 @@ class TasksActivity : Activity() {
     private val items = ArrayList<String>()
     private lateinit var adapter: ArrayAdapter<String>
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        applyTheme()
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_tasks)
+    private fun rid(name: String, type: String): Int =
+        resources.getIdentifier(name, type, packageName)
 
-        intent.getStringExtra("category")?.let { category = it }
+    override fun onCreate(savedInstanceState: Bundle?) {
+        // 🔥 FIX: Apply theme before super.onCreate
+        applyTheme()
+
+        super.onCreate(savedInstanceState)
+        setContentView(rid("activity_tasks", "layout"))
+
+        val c = intent.getStringExtra("category")
+        if (c != null) category = c
 
         db = EntryDbHelper(this)
 
-        findViewById<TextView>(R.id.tasksTitle).text = category
+        val title = findViewById<TextView>(rid("tasksTitle", "id"))
+        title.text = category
 
-        val list = findViewById<ListView>(R.id.taskList)
+        val list = findViewById<ListView>(rid("taskList", "id"))
+        
+        // 🔥 FIX: Use the custom item_task layout instead of the default Android one
         adapter = ArrayAdapter<String>(
-            this,
-            R.layout.item_task,
-            R.id.taskText,
+            this, 
+            rid("item_task", "layout"), 
+            rid("taskText", "id"), 
             items
         )
         list.adapter = adapter
 
-        val input = findViewById<EditText>(R.id.taskInput)
-        findViewById<Button>(R.id.addTaskBtn).setOnClickListener(object : View.OnClickListener {
+        val input = findViewById<EditText>(rid("taskInput", "id"))
+        val btn = findViewById<Button>(rid("addTaskBtn", "id"))
+        btn.setOnClickListener(object : View.OnClickListener {
             override fun onClick(v: View?) {
                 val text = input.text.toString().trim()
                 if (text.isEmpty()) {
@@ -61,7 +71,8 @@ class TasksActivity : Activity() {
             .getString(Config.KEY_THEME, Config.THEME_SYSTEM) ?: Config.THEME_SYSTEM
         val dark = mode == Config.THEME_DARK ||
             (mode == Config.THEME_SYSTEM && (resources.configuration.uiMode and 0x30) == 0x20)
-        setTheme(if (dark) R.style.AppTheme_Dark else R.style.AppTheme)
+        val styleId = resources.getIdentifier(if (dark) "AppTheme_Dark" else "AppTheme", "style", packageName)
+        if (styleId != 0) setTheme(styleId)
     }
 
     private fun reload() {
@@ -74,8 +85,9 @@ class TasksActivity : Activity() {
         }
         adapter.notifyDataSetChanged()
 
-        val emptyView = findViewById<LinearLayout>(R.id.tasksEmpty)
-        val listView = findViewById<ListView>(R.id.taskList)
+        // 🔥 FIX: Toggle empty state visibility
+        val emptyView = findViewById<LinearLayout>(rid("tasksEmpty", "id"))
+        val listView = findViewById<ListView>(rid("taskList", "id"))
         if (items.isEmpty()) {
             emptyView.visibility = View.VISIBLE
             listView.visibility = View.GONE

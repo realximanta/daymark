@@ -6,6 +6,13 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 
+/**
+ * Entry model.
+ *
+ * [completed] is only meaningful for task-like categories
+ * ("Schedule/Tasks" and "Plan for Tomorrow"). It defaults to false everywhere
+ * so existing call sites keep working.
+ */
 data class Entry(
     val id: Long,
     val category: String,
@@ -46,28 +53,39 @@ class EntryDbHelper(context: Context) : SQLiteOpenHelper(context, DB_NAME, null,
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
+        // Never drop journal data during an app update.
         if (oldVersion < 2) {
             db.execSQL("CREATE INDEX IF NOT EXISTS idx_entries_timestamp ON $TBL ($COL_TIMESTAMP DESC)")
             db.execSQL("CREATE INDEX IF NOT EXISTS idx_entries_category ON $TBL ($COL_CATEGORY)")
         }
         if (oldVersion < 3) {
+            // Add the completed flag for interactive tasks. Existing rows default to 0.
             db.execSQL("ALTER TABLE $TBL ADD COLUMN $COL_COMPLETED INTEGER NOT NULL DEFAULT 0")
             db.execSQL("CREATE INDEX IF NOT EXISTS idx_entries_synced ON $TBL ($COL_SYNCED)")
         }
     }
 
+    // ─────────────────────────────────────────────────────────────────────
+    // Internal helpers
+    // ─────────────────────────────────────────────────────────────────────
+
+    /** Column list shared by every SELECT so indices stay in sync. */
     private val allColumns = arrayOf(
         COL_ID, COL_CATEGORY, COL_TEXT, COL_TIMESTAMP, COL_SYNCED, COL_COMPLETED
     )
 
     private fun cursorToEntry(c: Cursor): Entry = Entry(
-        id = c.getLong(c.getColumnIndexOrThrow(COL_ID)),
-        category = c.getString(c.getColumnIndexOrThrow(COL_CATEGORY)),
-        text = c.getString(c.getColumnIndexOrThrow(COL_TEXT)),
-        timestamp = c.getLong(c.getColumnIndexOrThrow(COL_TIMESTAMP)),
-        synced = c.getInt(c.getColumnIndexOrThrow(COL_SYNCED)) != 0,
-        completed = c.getInt(c.getColumnIndexOrThrow(COL_COMPLETED)) != 0
+        id = c.getLong(0),
+        category = c.getString(1),
+        text = c.getString(2),
+        timestamp = c.getLong(3),
+        synced = c.getInt(4) != 0,
+        completed = c.getInt(5) != 0
     )
+
+    // ─────────────────────────────────────────────────────────────────────
+    // Writes
+    // ─────────────────────────────────────────────────────────────────────
 
     fun insertEntry(category: String, text: String, timestamp: Long): Long {
         val cv = ContentValues()
@@ -94,6 +112,10 @@ class EntryDbHelper(context: Context) : SQLiteOpenHelper(context, DB_NAME, null,
     fun deleteEntry(id: Long): Boolean =
         writableDatabase.delete(TBL, "$COL_ID = ?", arrayOf(id.toString())) > 0
 
+    // ─────────────────────────────────────────────────────────────────────
+    // Reads
+    // ─────────────────────────────────────────────────────────────────────
+
     fun getUnsynced(): ArrayList<Entry> {
         val list = ArrayList<Entry>()
         readableDatabase.query(
@@ -106,6 +128,10 @@ class EntryDbHelper(context: Context) : SQLiteOpenHelper(context, DB_NAME, null,
         return list
     }
 
+    /**
+     * Only returns entries that have already been pushed to the backend.
+     * Used by the redesigned History screen.
+     */
     fun getSyncedEntries(): ArrayList<Entry> {
         val list = ArrayList<Entry>()
         readableDatabase.query(

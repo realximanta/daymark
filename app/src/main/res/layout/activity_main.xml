@@ -1,263 +1,351 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rootLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg">
+    android:background="?attr/daymarkBackground">
 
+    <!-- ═══════════════ MAIN CONTENT ═══════════════ -->
     <LinearLayout
+        android:id="@+id/mainContent"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <!-- Header: menu · wordmark · sync -->
+        <!-- 🏷️ Top bar: menu · brand · sync -->
         <LinearLayout
-            android:id="@+id/header"
+            android:id="@+id/topBar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
+            android:layout_height="68dp"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
             android:gravity="center_vertical"
-            android:paddingStart="12dp"
-            android:paddingEnd="12dp"
-            android:paddingTop="10dp"
-            android:paddingBottom="6dp">
+            android:orientation="horizontal">
 
             <ImageButton
                 android:id="@+id/menuBtn"
-                android:layout_width="44dp"
-                android:layout_height="44dp"
-                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:layout_width="46dp"
+                android:layout_height="46dp"
+                android:background="@drawable/bg_icon_button"
+                android:padding="13dp"
                 android:src="@drawable/ic_menu"
-                android:contentDescription="Menu"/>
+                android:tint="?attr/daymarkTextPrimary"
+                android:contentDescription="@string/menu" />
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:orientation="vertical"
-                android:gravity="center">
+                android:paddingStart="15dp"
+                android:orientation="vertical">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="daymark."
-                    android:textColor="@color/text_primary"
-                    android:textSize="26sp"
-                    android:textStyle="bold"
-                    android:fontFamily="serif"/>
+                    android:textColor="?attr/daymarkTextPrimary"
+                    android:textSize="23sp"
+                    android:fontFamily="serif"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="YOUR PERSONAL JOURNAL"
-                    android:textColor="@color/text_secondary"
+                    android:textAllCaps="true"
+                    android:letterSpacing="0.14"
                     android:textSize="9sp"
-                    android:letterSpacing="0.18"/>
+                    android:textColor="?attr/daymarkTextSecondary" />
             </LinearLayout>
 
             <ImageButton
                 android:id="@+id/syncIconBtn"
-                android:layout_width="44dp"
-                android:layout_height="44dp"
-                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:layout_width="46dp"
+                android:layout_height="46dp"
+                android:background="@drawable/bg_icon_button"
+                android:padding="13dp"
                 android:src="@drawable/ic_sync"
-                android:contentDescription="Sync now"/>
+                android:tint="?attr/daymarkTextPrimary"
+                android:contentDescription="@string/sync_now" />
         </LinearLayout>
 
-        <ScrollView
+        <!-- 🌿 Hero panel (date · greeting · stats) -->
+        <LinearLayout
+            android:id="@+id/header"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:fillViewport="true"
-            android:clipToPadding="false"
-            android:paddingBottom="24dp"
-            android:scrollbars="none">
+            android:layout_height="wrap_content"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="20dp"
+            android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp">
+                android:background="@drawable/bg_hero"
+                android:paddingStart="24dp"
+                android:paddingEnd="24dp"
+                android:paddingTop="24dp"
+                android:paddingBottom="23dp">
 
-                <!-- Hero -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:background="@drawable/hero_bg"
-                    android:padding="22dp"
-                    android:layout_marginTop="6dp">
-
-                    <TextView
-                        android:id="@+id/dateText"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="TODAY · YOUR SPACE"
-                        android:textColor="#B8D6C6"
-                        android:textSize="10sp"
-                        android:letterSpacing="0.12"/>
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:text="Make today yours."
-                        android:textColor="@color/hero_text"
-                        android:textSize="30sp"
-                        android:textStyle="bold"
-                        android:fontFamily="serif"/>
-
-                    <TextView
-                        android:id="@+id/greetingText"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp"
-                        android:text="Little moments become the best stories."
-                        android:textColor="#C9DED2"
-                        android:textSize="13sp"/>
-
-                    <TextView
-                        android:id="@+id/statsView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="18dp"
-                        android:paddingStart="14dp"
-                        android:paddingEnd="14dp"
-                        android:paddingTop="7dp"
-                        android:paddingBottom="7dp"
-                        android:background="@drawable/chip_bg"
-                        android:textColor="@color/hero_text"
-                        android:textSize="11sp"
-                        android:text="0 entries · Sync not run yet"/>
-                </LinearLayout>
-
-                <!-- Section heading -->
                 <TextView
-                    android:layout_width="match_parent"
+                    android:id="@+id/dateText"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="26dp"
-                    android:text="What's on your mind?"
-                    android:textColor="@color/text_primary"
-                    android:textSize="22sp"
+                    android:text="TODAY · YOUR SPACE"
+                    android:letterSpacing="0.12"
+                    android:textSize="10sp"
                     android:textStyle="bold"
-                    android:fontFamily="serif"/>
+                    android:textColor="#CBEBDA" />
 
                 <TextView
+                    android:id="@+id/greetingText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp"
-                    android:text="Choose a space to begin"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="13sp"/>
+                    android:text="Make today yours."
+                    android:fontFamily="serif"
+                    android:textSize="30sp"
+                    android:textStyle="bold"
+                    android:textColor="#FFFFFF"
+                    android:layout_marginTop="12dp" />
 
-                <!-- Update banner — hidden until UpdateChecker finds a release -->
-                <Button
-                    android:id="@+id/updateBtn"
+                <TextView
+                    android:id="@+id/subtitleView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:visibility="gone"
-                    android:text="Update available"/>
+                    android:text="Little moments become the best stories."
+                    android:textSize="13sp"
+                    android:textColor="#D7EAE0"
+                    android:layout_marginTop="6dp" />
 
-                <!-- Category grid -->
-                <GridView
-                    android:id="@+id/gridButtons"
-                    android:layout_width="match_parent"
+                <TextView
+                    android:id="@+id/statsView"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:numColumns="2"
-                    android:stretchMode="columnWidth"
-                    android:verticalSpacing="0dp"
-                    android:horizontalSpacing="0dp"
-                    android:listSelector="@android:color/transparent"
-                    android:clipToPadding="false"/>
+                    android:text="0 entries • Ready to write"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    android:textColor="#F0F9EE"
+                    android:background="@drawable/bg_pill"
+                    android:paddingStart="14dp"
+                    android:paddingEnd="14dp"
+                    android:paddingTop="9dp"
+                    android:paddingBottom="9dp"
+                    android:layout_marginTop="20dp" />
             </LinearLayout>
-        </ScrollView>
+        </LinearLayout>
 
-        <TextView
-            android:id="@+id/versionFooter"
+        <!-- 🎴 Grid section header -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="6dp"
-            android:paddingBottom="10dp"
-            android:gravity="center"
-            android:textColor="@color/text_secondary"
-            android:textSize="10sp"/>
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingStart="22dp"
+            android:paddingEnd="22dp"
+            android:paddingBottom="13dp">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="What's on your mind?"
+                    android:textColor="?attr/daymarkTextPrimary"
+                    android:fontFamily="serif"
+                    android:textSize="21sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Choose a space to begin"
+                    android:textColor="?attr/daymarkTextSecondary"
+                    android:textSize="12sp"
+                    android:layout_marginTop="2dp" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="9 SPACES"
+                android:textColor="?attr/daymarkAccent"
+                android:textStyle="bold"
+                android:textSize="10sp"
+                android:letterSpacing="0.08" />
+        </LinearLayout>
+
+        <!-- 🎴 Category grid -->
+        <GridView
+            android:id="@+id/gridButtons"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:numColumns="2"
+            android:horizontalSpacing="12dp"
+            android:verticalSpacing="12dp"
+            android:stretchMode="columnWidth"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:paddingTop="2dp"
+            android:paddingBottom="24dp"
+            android:clipToPadding="false"
+            android:scrollbars="none" />
     </LinearLayout>
 
-    <!-- Scrim behind the drawer -->
+    <!-- ═══════════════ SCRIM OVERLAY ═══════════════ -->
     <View
         android:id="@+id/scrim"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#80000000"
-        android:visibility="gone"/>
+        android:background="@color/scrim"
+        android:visibility="gone"
+        android:clickable="true"
+        android:focusable="true" />
 
-    <!-- Navigation drawer — starts off-screen, MainActivity animates translationX -->
+    <!-- ═══════════════ NAVIGATION DRAWER ═══════════════ -->
     <LinearLayout
         android:id="@+id/navDrawer"
         android:layout_width="290dp"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:background="@color/surface"
-        android:paddingTop="40dp"
-        android:elevation="16dp"
+        android:background="?attr/daymarkSurface"
+        android:elevation="18dp"
         android:translationX="-320dp">
 
-        <TextView
+        <!-- Drawer header -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingStart="20dp"
-            android:paddingEnd="20dp"
-            android:paddingBottom="20dp"
-            android:text="daymark."
-            android:textColor="@color/text_primary"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:fontFamily="serif"/>
+            android:orientation="vertical"
+            android:padding="24dp"
+            android:background="@drawable/bg_drawer_header">
 
+            <ImageView
+                android:layout_width="52dp"
+                android:layout_height="52dp"
+                android:src="@drawable/ic_launcher"
+                android:contentDescription="@string/app_name" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="daymark."
+                android:fontFamily="serif"
+                android:textColor="#FFFFFF"
+                android:textSize="27sp"
+                android:textStyle="bold"
+                android:layout_marginTop="16dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="A little room to reflect."
+                android:textSize="12sp"
+                android:textColor="#CCE2D5"
+                android:layout_marginTop="4dp" />
+        </LinearLayout>
+
+        <!-- 🕒 Journal history -->
+        <LinearLayout
+            android:id="@+id/navHistory"
+            style="@style/DrawerItem"
+            android:paddingEnd="16dp">
+
+            <ImageView
+                android:layout_width="23dp"
+                android:layout_height="23dp"
+                android:src="@drawable/ic_history"
+                android:tint="?attr/daymarkAccent"
+                android:contentDescription="@null" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Journal history"
+                android:textColor="?attr/daymarkTextPrimary"
+                android:textSize="15sp"
+                android:layout_marginStart="18dp" />
+        </LinearLayout>
+
+        <!-- ⚙️ Preferences -->
+        <LinearLayout
+            android:id="@+id/navSettings"
+            style="@style/DrawerItem"
+            android:paddingEnd="16dp">
+
+            <ImageView
+                android:layout_width="23dp"
+                android:layout_height="23dp"
+                android:src="@drawable/ic_settings"
+                android:tint="?attr/daymarkAccent"
+                android:contentDescription="@null" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Preferences"
+                android:textColor="?attr/daymarkTextPrimary"
+                android:textSize="15sp"
+                android:layout_marginStart="18dp" />
+        </LinearLayout>
+
+        <!-- 🔄 Sync now -->
+        <LinearLayout
+            android:id="@+id/navSync"
+            style="@style/DrawerItem"
+            android:paddingEnd="16dp">
+
+            <ImageView
+                android:id="@+id/navSyncIcon"
+                android:layout_width="23dp"
+                android:layout_height="23dp"
+                android:src="@drawable/ic_sync"
+                android:tint="?attr/daymarkAccent"
+                android:contentDescription="@null" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Sync now"
+                android:textColor="?attr/daymarkTextPrimary"
+                android:textSize="15sp"
+                android:layout_marginStart="18dp" />
+        </LinearLayout>
+
+        <!-- ⬆ Update pill (shown dynamically) -->
+        <Button
+            android:id="@+id/updateBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Update available"
+            android:textColor="#214C37"
+            android:textAllCaps="false"
+            android:background="@drawable/bg_update_pill"
+            android:layout_margin="16dp"
+            android:padding="12dp"
+            android:minHeight="0dp"
+            android:visibility="gone" />
+
+        <!-- Spacer -->
         <View
             android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="20dp"
-            android:layout_marginBottom="8dp"
-            android:background="@color/card_stroke"/>
+            android:layout_height="0dp"
+            android:layout_weight="1" />
 
+        <!-- Version footer -->
         <TextView
-            android:id="@+id/navHistory"
-            android:layout_width="match_parent"
-            android:layout_height="52dp"
-            android:gravity="center_vertical"
-            android:paddingStart="20dp"
-            android:paddingEnd="20dp"
-            android:text="History"
-            android:textColor="@color/text_primary"
-            android:textSize="16sp"
-            android:background="?android:attr/selectableItemBackground"/>
-
-        <TextView
-            android:id="@+id/navSync"
-            android:layout_width="match_parent"
-            android:layout_height="52dp"
-            android:gravity="center_vertical"
-            android:paddingStart="20dp"
-            android:paddingEnd="20dp"
-            android:text="Sync now"
-            android:textColor="@color/text_primary"
-            android:textSize="16sp"
-            android:background="?android:attr/selectableItemBackground"/>
-
-        <TextView
-            android:id="@+id/navSettings"
-            android:layout_width="match_parent"
-            android:layout_height="52dp"
-            android:gravity="center_vertical"
-            android:paddingStart="20dp"
-            android:paddingEnd="20dp"
-            android:text="Preferences"
-            android:textColor="@color/text_primary"
-            android:textSize="16sp"
-            android:background="?android:attr/selectableItemBackground"/>
+            android:id="@+id/versionFooter"
+            style="@style/DrawerFooter"
+            android:text="Daymark" />
     </LinearLayout>
 </FrameLayout>

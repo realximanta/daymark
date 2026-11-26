@@ -24,6 +24,13 @@ import java.nio.charset.StandardCharsets
 import java.text.DateFormat
 import java.util.Date
 
+/**
+ * Journal history screen.
+ *
+ * Shows ONLY entries that have been synced to GitHub. Each row can be
+ * deleted locally (device only) or from GitHub (via the backend DELETE
+ * endpoint), depending on what the user picks from the delete dialog.
+ */
 class HistoryActivity : Activity() {
 
     private lateinit var db: EntryDbHelper
@@ -33,24 +40,31 @@ class HistoryActivity : Activity() {
     private val visibleEntries = ArrayList<Entry>()
     private val mainHandler = Handler(Looper.getMainLooper())
 
+    private fun rid(name: String, type: String): Int =
+        resources.getIdentifier(name, type, packageName)
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        // 🔥 FIX: Apply theme before super.onCreate
         applyTheme()
+
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_history)
+        setContentView(rid("activity_history", "layout"))
         db = EntryDbHelper(this)
 
-        listView = findViewById(R.id.historyList)
+        listView = findViewById(rid("historyList", "id"))
         adapter = HistoryAdapter()
         listView.adapter = adapter
 
+        // 👆 Long-press → delete dialog
         listView.setOnItemLongClickListener { _, _, position, _ ->
             visibleEntries.getOrNull(position)?.let { showDeleteOptions(it) }
             true
         }
 
+        // 👈 Swipe-left → delete dialog
         attachSwipeToDelete()
 
-        findViewById<EditText>(R.id.historySearch).addTextChangedListener(object : TextWatcher {
+        findViewById<EditText>(rid("historySearch", "id")).addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 filter(s?.toString().orEmpty())
@@ -63,22 +77,35 @@ class HistoryActivity : Activity() {
 
     override fun onResume() {
         super.onResume()
+        // Refresh: entries synced while we were away should now appear.
         reload()
     }
+
+    // ═══════════════════════════════════════════════════════════════════
+    // Theme
+    // ═══════════════════════════════════════════════════════════════════
 
     private fun applyTheme() {
         val mode = getSharedPreferences(Config.PREFS, MODE_PRIVATE)
             .getString(Config.KEY_THEME, Config.THEME_SYSTEM) ?: Config.THEME_SYSTEM
         val dark = mode == Config.THEME_DARK ||
             (mode == Config.THEME_SYSTEM && (resources.configuration.uiMode and 0x30) == 0x20)
-        setTheme(if (dark) R.style.AppTheme_Dark else R.style.AppTheme)
+        val styleId = resources.getIdentifier(
+            if (dark) "AppTheme_Dark" else "AppTheme", "style", packageName
+        )
+        if (styleId != 0) setTheme(styleId)
     }
+
+    // ═══════════════════════════════════════════════════════════════════
+    // Data
+    // ═══════════════════════════════════════════════════════════════════
 
     private fun reload() {
         if (!::db.isInitialized) return
         allEntries.clear()
+        // Only entries that have been pushed to GitHub appear here.
         allEntries.addAll(db.getSyncedEntries())
-        val query = findViewById<EditText>(R.id.historySearch).text?.toString().orEmpty()
+        val query = findViewById<EditText>(rid("historySearch", "id")).text?.toString().orEmpty()
         filter(query)
     }
 
@@ -98,11 +125,15 @@ class HistoryActivity : Activity() {
     }
 
     private fun toggleEmptyState() {
-        val empty = findViewById<View>(R.id.historyEmpty)
+        val empty = findViewById<View>(rid("historyEmpty", "id"))
         val isEmpty = visibleEntries.isEmpty()
         empty.visibility = if (isEmpty) View.VISIBLE else View.GONE
         listView.visibility = if (isEmpty) View.GONE else View.VISIBLE
     }
+
+    // ═══════════════════════════════════════════════════════════════════
+    // Swipe gesture
+    // ═══════════════════════════════════════════════════════════════════
 
     private fun attachSwipeToDelete() {
         listView.setOnTouchListener(object : View.OnTouchListener {
@@ -140,6 +171,10 @@ class HistoryActivity : Activity() {
             }
         })
     }
+
+    // ═══════════════════════════════════════════════════════════════════
+    // Delete flow
+    // ═══════════════════════════════════════════════════════════════════
 
     private fun showDeleteOptions(entry: Entry) {
         AlertDialog.Builder(this)
@@ -181,6 +216,7 @@ class HistoryActivity : Activity() {
                         reload()
                     }
                     BackendDeleteResult.NOT_FOUND -> {
+                        // Backend says it's not there — probably already gone.
                         db.deleteEntry(entry.id)
                         Toast.makeText(this, "Not on GitHub — cleaned up locally.", Toast.LENGTH_SHORT).show()
                         reload()
@@ -238,6 +274,10 @@ class HistoryActivity : Activity() {
         }
     }
 
+    // ═══════════════════════════════════════════════════════════════════
+    // Adapter
+    // ═══════════════════════════════════════════════════════════════════
+
     private inner class HistoryAdapter : BaseAdapter() {
         private val inflater = LayoutInflater.from(this@HistoryActivity)
         private val dateFormat = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT)
@@ -247,13 +287,13 @@ class HistoryActivity : Activity() {
         override fun getItemId(position: Int): Long = visibleEntries[position].id
 
         override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-            val view = convertView ?: inflater.inflate(R.layout.item_history, parent, false)
+            val view = convertView ?: inflater.inflate(rid("item_history", "layout"), parent, false)
             val entry = visibleEntries[position]
 
-            view.findViewById<TextView>(R.id.historyCategory).text = entry.category
-            view.findViewById<TextView>(R.id.historyDate).text =
+            view.findViewById<TextView>(rid("historyCategory", "id")).text = entry.category
+            view.findViewById<TextView>(rid("historyDate", "id")).text =
                 dateFormat.format(Date(entry.timestamp))
-            view.findViewById<TextView>(R.id.historyText).text = entry.text
+            view.findViewById<TextView>(rid("historyText", "id")).text = entry.text
             return view
         }
     }

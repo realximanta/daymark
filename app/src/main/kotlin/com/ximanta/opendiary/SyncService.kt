@@ -1,4 +1,3 @@
-// language: Kotlin, file: SyncService.kt, target: Android API 26-35
 package com.ximanta.opendiary
 
 import android.app.Notification
@@ -7,7 +6,6 @@ import android.app.NotificationManager
 import android.app.Service
 import android.content.Context
 import android.content.Intent
-import android.content.pm.ServiceInfo
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
@@ -28,11 +26,6 @@ import java.util.concurrent.atomic.AtomicBoolean
  * Auth: the device-stored passcode is sent as
  *   Authorization: Bearer <passcode>
  * on every request. The backend rejects requests without it.
- *
- * On API 34+ startForeground MUST be called with the dataSync type because the
- * manifest declares android:foregroundServiceType="dataSync". Omitting the type
- * throws SecurityException which the surrounding catch would swallow — the
- * service would die silently and sync would stop without a visible error.
  */
 class SyncService : Service() {
 
@@ -46,16 +39,7 @@ class SyncService : Service() {
 
         try {
             ensureChannel()
-            val notification = buildSyncNotification("Syncing entries…")
-            if (Build.VERSION.SDK_INT >= 34) {
-                startForeground(
-                    NOTIF_ID,
-                    notification,
-                    ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC
-                )
-            } else {
-                startForeground(NOTIF_ID, notification)
-            }
+            startForeground(NOTIF_ID, buildSyncNotification("Syncing entries…"))
         } catch (t: Throwable) {
             running.set(false)
             Log.e(TAG, "startForeground failed", t)
@@ -197,6 +181,7 @@ class SyncService : Service() {
                 setRequestProperty("Content-Type", "application/json; charset=utf-8")
                 setRequestProperty("Accept", "application/json")
                 setRequestProperty("User-Agent", "Daymark-Android")
+                // 🔐 Preferred auth header — matches backend `Authorization: Bearer`
                 setRequestProperty("Authorization", "Bearer $passcode")
                 setFixedLengthStreamingMode(bytes.size)
                 doOutput = true
@@ -285,7 +270,6 @@ class SyncService : Service() {
         val builder = if (Build.VERSION.SDK_INT >= 26) {
             Notification.Builder(this, CHANNEL_ID)
         } else {
-            @Suppress("DEPRECATION")
             Notification.Builder(this)
         }
         return builder
@@ -314,7 +298,6 @@ class SyncService : Service() {
         val builder = if (Build.VERSION.SDK_INT >= 26) {
             Notification.Builder(this, WARN_CHANNEL_ID)
         } else {
-            @Suppress("DEPRECATION")
             Notification.Builder(this)
         }
         builder.setContentTitle("Daymark can't sync")
